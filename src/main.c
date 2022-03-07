@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-const n = 80, m = 80;
+const int n = 80, m = 80;
 
 int **mem_alloc(int n, int m);
 void mem_free(int n);
