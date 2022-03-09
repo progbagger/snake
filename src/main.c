@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define N 80
-#define M 80
+#define N 40
+#define M 40
 
 int **mem_alloc();
 void mem_free(int **arr);
