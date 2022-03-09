@@ -13,6 +13,7 @@ int is_collision(int **field);
 void start_field(int s);
 void work();
 void snake_start_pos(int **field, int **head, int **tail, int size);
+int input_start_pos();
 
 int main() {
     work();
@@ -24,6 +25,21 @@ void work() {
     int **field = mem_alloc(), size = 4;
     int *head, *tail;
     snake_start_pos(field, &head, &tail, size);
+    start_field(input_start_pos());
+}
+
+/*
+    Кирюха, сделай тут интерактивное
+    меню кароч, чтобы можно было
+    стрелочками передвигаться между
+    пунктами меню, будет очень круто
+    Типа каждый кадр - выбор одной
+    из опций меню: настройки скорости,
+    выбор опций типа можно ли проходить
+    сквозь края, нужны ли препятствия и тд
+*/
+int input_start_pos() {
+
 }
 
 // выбоор стартового поля
