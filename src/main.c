@@ -7,13 +7,14 @@
 
 int **mem_alloc();
 void mem_free(int **arr);
-void move(int **field, int **head, int **tail, int direction, int prev_direction);
+void move(int **field, int **head, int **tail, int direction);
 void eat(int **field, int **head, int **tail, int *size);
 int is_collision(int **field);
 void start_field(int s);
 void work();
 void snake_start_pos(int **field, int **head, int **tail, int size);
 int input_start_pos();
+int control();
 
 int main() {
     work();
@@ -23,9 +24,20 @@ int main() {
 // основная работяга
 void work() {
     int **field = mem_alloc(), size = 4;
-    int *head, *tail;
-    snake_start_pos(field, &head, &tail, size);
+    int **head, **tail, status = 0;
+    snake_start_pos(field, head, tail, size);
     start_field(input_start_pos());
+    while (!status) {
+
+    }
+}
+
+/*
+    Управление змейкой и игрой
+    в целом
+*/
+int control() {
+
 }
 
 /*
@@ -79,23 +91,19 @@ void mem_free(int **arr) {
 }
 
 // движение змейки
-void move(int **field, int **head, int **tail, int direction, int prev_direction) {
+void move(int **field, int **head, int **tail, int direction) {
     switch (direction) {
         case 0:
-            if (prev_direction != 2)
-                *(*head + 1) = 1;
+            *(*head + 1) = 1;
             break;
         case 1:
-            if (prev_direction != 3)
-                **(head + 1) = 1;
+            **(head + 1) = 1;
             break;
         case 2:
-            if (prev_direction != 0)
-                *(*head - 1) = 1;
+            *(*head - 1) = 1;
             break;
         case 3:
-            if (prev_direction != 1)
-                **(head - 1) = 1;
+            **(head - 1) = 1;
             break;
     }
 }
