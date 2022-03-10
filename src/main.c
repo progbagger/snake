@@ -1,20 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <unistd.h>
 
-#define N 40
-#define M 40
+#define N 54
+#define M 84
 
 int **mem_alloc();
 void mem_free(int **arr);
-void move(int **field, int **head, int **tail, int direction);
-void eat(int **field, int **head, int **tail, int *size);
-int is_collision(int **field);
-void start_field(int s);
+void move(int **field, int *hi, int *hj, int *ti, int *tj, int direction);
+void eat(int **field, int *hi, int *hj, int *ti, int *tj, int *size);
+int is_collision(int **field, int hi, int hj);
+void start_field(int **field, int *hi, int *hj, int *ti, int *tj, int s);
 void work();
-void snake_start_pos(int **field, int **head, int **tail, int size);
 int input_start_pos();
-int control();
+int control(int *status, int *direction);
+void print_map(int **field, int status);
+void file_input(int **field, int *hi, int *hj, int *ti, int *tj, char *file);
 
 int main() {
     work();
@@ -24,11 +26,16 @@ int main() {
 // основная работяга
 void work() {
     int **field = mem_alloc(), size = 4;
-    int **head, **tail, status = 0;
-    snake_start_pos(field, head, tail, size);
-    start_field(input_start_pos());
+    int hi, hj, ti, tj, dir = 0, status = 0;
+    start_field(field, &hi, &hj, &ti, &tj, input_start_pos());
     while (!status) {
-
+        control(&status, &dir);
+        move(field, &hi, &hj, &ti, &tj, dir);
+        eat(field, &hi, &hj, &ti, &tj, &size);
+        if (is_collision(field, hi, hj))
+            status = 1;
+        print_map(field, status);
+        usleep(500000);
     }
 }
 
@@ -36,7 +43,7 @@ void work() {
     Управление змейкой и игрой
     в целом
 */
-int control() {
+int control(int *status, int *direction) {
 
 }
 
@@ -50,31 +57,49 @@ int control() {
     выбор опций типа можно ли проходить
     сквозь края, нужны ли препятствия и тд
 */
-int input_start_pos() {
 
+void file_input(int **field, int *hi, int *hj, int *ti, int *tj, char *file) {
+    FILE *f = fopen(file, "r");
+    fscanf(f, "%d %d %d %d", hi, hj, ti, tj);
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < M; j++)
+            fscanf(f, "%d", &field[i][j]);
+}
+
+int input_start_pos() {
+    int result;
+    scanf("%d", &result);
+    return result;
 }
 
 // выбоор стартового поля
-void start_field(int s) {
+void start_field(int **field, int *hi, int *hj, int *ti, int *tj, int s) {
+    char *file1 = "1.txt";
+    char *file2 = "2.txt";
+    char *file3 = "3.txt";
+    char *file4 = "4.txt";
+    char *file5 = "5.txt";
+    char *file6 = "6.txt";
     switch (s) {
-        
+        case 1:
+            file_input(field, hi, hj, ti, tj, file1);
+            break;
+        case 2:
+            file_input(field, hi, hj, ti, tj, file2);
+            break;
+        case 3:
+            file_input(field, hi, hj, ti, tj, file3);
+            break;
+        case 4:
+            file_input(field, hi, hj, ti, tj, file4);
+            break;
+        case 5:
+            file_input(field, hi, hj, ti, tj, file5);
+            break;
+        case 6:
+            file_input(field, hi, hj, ti, tj, file6);
+            break;
     }
-}
-
-// стартовая позиция змейки
-void snake_start_pos(int **field, int **head, int **tail, int size) {
-    /*
-        Пусть змейка стартует с середины
-        по вертикали и чуть левее центра
-        по горизонтали. Тогда стартовая
-        координата головы по n будет n / 2,
-        а по m примерно m / 2 - 5
-    */
-    *head = field[N / 2] + M / 2 - 5;
-    **head = 1;
-    for (int i = 1; i < size; i++)
-        *(head[N / 2] - size) = 1;
-    *tail = field[N / 2] + M / 2 - 5 - size + 1;
 }
 
 // выделение памяти под поле
@@ -93,25 +118,28 @@ void mem_free(int **arr) {
 }
 
 // движение змейки
-void move(int **field, int **head, int **tail, int direction) {
+void move(int **field, int *hi, int *hj, int *ti, int *tj, int direction) {
     switch (direction) {
         case 0:
-            *(*head + 1) = 1;
+            *hj = (*hj + 1 + M) % M;
             break;
         case 1:
-            **(head + 1) = 1;
+            *hi += (*hi + 1 + N) % N;
             break;
         case 2:
-            *(*head - 1) = 1;
+            *ti = (*ti - 1 + M) % M;
             break;
         case 3:
-            **(head - 1) = 1;
+            *tj = (*tj - 1 + N) % N;
             break;
     }
+    field[*hi][*hj] = 1;
+    field[*ti][*tj] = 0;
+
 }
 
 // поедание "яблока"
-void eat(int **field, int **head, int **tail, int *size) {
+void eat(int **field, int *hi, int *hj, int *ti, int *tj, int *size) {
 
 }
 
@@ -119,16 +147,16 @@ void eat(int **field, int **head, int **tail, int *size) {
     проверка столкновения со
     стеной или с самой змейкой
 */
-int is_collision(int **field) {
-
+int is_collision(int **field, int hi, int hj) {
+    return 0;
 }
 
 // отрисовка поля
-void print_map(int **field) {
+void print_map(int **field, int status) {
     system("clear");
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < M; j++) {
-            if (field[i][j] == 1) {
+            if (field[i][j] == 1 || field[i][j] == 2) {
                 printf("#");
             } else { printf(" "); }
         }
