@@ -121,6 +121,7 @@ int is_collision(int **field) {
 
 }
 
+// отрисовка поля
 void print_map(int **field) {
     system("clear");
     for (int i = 0; i < N; i++) {
