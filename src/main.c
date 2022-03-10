@@ -120,3 +120,15 @@ void eat(int **field, int **head, int **tail, int *size) {
 int is_collision(int **field) {
 
 }
+
+void print_map(int **field) {
+    system("clear");
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < M; j++) {
+            if (field[i][j] == 1) {
+                printf("#");
+            } else { printf(" "); }
+        }
+    printf("\n");
+    }
+}
