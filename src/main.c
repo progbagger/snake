@@ -56,7 +56,9 @@ int input_start_pos() {
 
 // выбоор стартового поля
 void start_field(int s) {
-
+    switch (s) {
+        
+    }
 }
 
 // стартовая позиция змейки
