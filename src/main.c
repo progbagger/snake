@@ -9,15 +9,15 @@
 
 int **mem_alloc();
 void mem_free(int **arr);
-void move(int **field, int *hi, int *hj, int *ti, int *tj, int direction);
-void eat(int **field, int *hi, int *hj, int *ti, int *tj, int *size);
-int is_collision(int **field, int hi, int hj);
-void start_field(int **field, int *hi, int *hj, int *ti, int *tj, int s);
+void move(snake *s, int direction);
+void eat(snake *s);
+int is_collision(snake *s, int **field);
+void start_field(snake *s, int **field, int param);
 void work();
 int input_start_pos();
 int control(int *status, int *direction);
-void print_map(int **field, int status);
-void file_input(int **field, int *hi, int *hj, int *ti, int *tj, char *file);
+void print_map(snake *s, int **field, int status);
+int file_input(snake *s, int **field, char *file);
 
 int main() {
     work();
@@ -26,17 +26,17 @@ int main() {
 
 // основная работяга
 void work() {
-    int **field = mem_alloc(), size = 4;
+    int **field = mem_alloc();
     snake s;
-    int hi, hj, ti, tj, dir = 0, status = 0;
-    start_field(field, &hi, &hj, &ti, &tj, input_start_pos());
+    int dir = 0, status = 0;
+    start_field(&s, field, input_start_pos());
     while (!status) {
         control(&status, &dir);
-        move(field, &hi, &hj, &ti, &tj, dir);
-        eat(field, &hi, &hj, &ti, &tj, &size);
-        if (is_collision(field, hi, hj))
+        move(&s, dir);
+        eat(&s);
+        if (is_collision(&s, field))
             status = 1;
-        print_map(field, status);
+        print_map(&s, field, status);
         usleep(500000);
     }
 }
@@ -60,12 +60,22 @@ int control(int *status, int *direction) {
     сквозь края, нужны ли препятствия и тд
 */
 
-void file_input(int **field, int *hi, int *hj, int *ti, int *tj, char *file) {
+int file_input(snake *s, int **field, char *file) {
+    int status = 1;
     FILE *f = fopen(file, "r");
-    fscanf(f, "%d %d %d %d", hi, hj, ti, tj);
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < N; i++) {
         for (int j = 0; j < M; j++)
-            fscanf(f, "%d", &field[i][j]);
+            if (!fscanf(f, "%d", &field[i][j])) {
+                status = 0;
+                i = N;
+                break;
+            } else {
+                if (field[i][j] == 2) {
+                    push_forward(s, i, j);
+                }
+            }
+    }
+    return status;
 }
 
 int input_start_pos() {
@@ -75,31 +85,31 @@ int input_start_pos() {
 }
 
 // выбоор стартового поля
-void start_field(int **field, int *hi, int *hj, int *ti, int *tj, int s) {
+void start_field(snake *s, int **field, int param) {
     char *file1 = "../datasets/1.txt";
     char *file2 = "../datasets/2.txt";
     char *file3 = "../datasets/3.txt";
     char *file4 = "../datasets/4.txt";
     char *file5 = "../datasets/5.txt";
     char *file6 = "../datasets/6.txt";
-    switch (s) {
+    switch (param) {
         case 1:
-            file_input(field, hi, hj, ti, tj, file1);
+            file_input(s, field, file1);
             break;
         case 2:
-            file_input(field, hi, hj, ti, tj, file2);
+            file_input(s, field, file2);
             break;
         case 3:
-            file_input(field, hi, hj, ti, tj, file3);
+            file_input(s, field, file3);
             break;
         case 4:
-            file_input(field, hi, hj, ti, tj, file4);
+            file_input(s, field, file4);
             break;
         case 5:
-            file_input(field, hi, hj, ti, tj, file5);
+            file_input(s, field, file5);
             break;
         case 6:
-            file_input(field, hi, hj, ti, tj, file6);
+            file_input(s, field, file6);
             break;
     }
 }
@@ -120,44 +130,41 @@ void mem_free(int **arr) {
 }
 
 // движение змейки
-void move(int **field, int *hi, int *hj, int *ti, int *tj, int direction) {
+void move(snake *s, int direction) {
     switch (direction) {
         case 0:
-            *hj = (*hj + 1 + M) % M;
+            move_snake(s, s->head->i + 1, s->head->j);
             break;
         case 1:
-            *hi += (*hi + 1 + N) % N;
+            move_snake(s, s->head->i, s->head->j + 1);
             break;
         case 2:
-            *ti = (*ti - 1 + M) % M;
+            move_snake(s, s->head->i - 1, s->head->j);
             break;
         case 3:
-            *tj = (*tj - 1 + N) % N;
+            move_snake(s, s->head->i, s->head->j - 1);
             break;
-    }
-    field[*hi][*hj] = 2;
-    field[*ti][*tj] = 0;
-    
+    }    
 }
 
 // поедание "яблока"
-void eat(int **field, int *hi, int *hj, int *ti, int *tj, int *size) {
-
+void eat(snake *s) {
+    // что-нибудь придумать...
 }
 
 /*
     проверка столкновения со
     стеной или с самой змейкой
 */
-int is_collision(int **field, int hi, int hj) {
+int is_collision(snake *s, int **field) {
     int result = 0;
-    if (field[hi][hj] == 1 || field[hi][hj] == 2)
+    if (field[s->head->i][s->head->j] == 1 || field[s->head->i][s->head->j] == 2)
         result = 1;
     return result;
 }
 
 // отрисовка поля
-void print_map(int **field, int status) {
+void print_map(snake *s, int **field, int status) {
     system("clear");
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < M; j++) {

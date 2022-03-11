@@ -1,13 +1,11 @@
 #include "snake.h"
 #include <stdlib.h>
 
-snake *init(int ii, int jj) {
+snake *init() {
     snake *p = NULL;
     p = malloc(sizeof(snake));
-    p->head->i = ii;
-    p->head->j = jj;
-    p->head->next = NULL;
-    p->size = 1;
+    p->size = 0;
+    p->head = NULL;
     return p;
 }
 
@@ -18,9 +16,13 @@ snake *push_back(snake *head, int ii, int jj) {
     result->j = jj;
     result->next = NULL;
     struct node *p = head->head;
-    while (p->next != NULL)
-        p = p->next;
-    p->next = result;
+    if (p == NULL) {
+        p = result;
+    } else {
+        while (p->next != NULL)
+            p = p->next;
+        p->next = result;
+    }
     return head;
 }
 
@@ -29,8 +31,13 @@ snake *push_forward(snake *head, int ii, int jj) {
     head->size++;
     p->i = ii;
     p->j = jj;
-    p->next = head->head->next;
-    head->head = p;
+    if (head->head == NULL) {
+        head->head = p;
+        p->next = NULL;
+    } else {
+        p->next = head->head->next;
+        head->head = p;
+    }
     return head;
 }
 
@@ -54,5 +61,6 @@ void delete_tail(snake *head) {
     while (p->next != NULL) {
         p = p->next;
     }
-    free(p);
+    if (p != NULL)
+        free(p);
 }

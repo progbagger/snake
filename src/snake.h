@@ -11,7 +11,7 @@ typedef struct stack {
     int size;
 } snake;
 
-snake *init(int ii, int jj);
+snake *init();
 snake *push_back(snake *head, int ii, int jj);
 snake *push_forward(snake *head, int ii, int jj);
 void destroy(snake *head);
