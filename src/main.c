@@ -27,6 +27,7 @@ int main() {
 // основная работяга
 void work() {
     int **field = mem_alloc(), size = 4;
+    snake s;
     int hi, hj, ti, tj, dir = 0, status = 0;
     start_field(field, &hi, &hj, &ti, &tj, input_start_pos());
     while (!status) {
