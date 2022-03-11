@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <unistd.h>
+
+#include "snake.h"
 
 #define N 54
 #define M 84
