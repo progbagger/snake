@@ -74,12 +74,12 @@ int input_start_pos() {
 
 // выбоор стартового поля
 void start_field(int **field, int *hi, int *hj, int *ti, int *tj, int s) {
-    char *file1 = "1.txt";
-    char *file2 = "2.txt";
-    char *file3 = "3.txt";
-    char *file4 = "4.txt";
-    char *file5 = "5.txt";
-    char *file6 = "6.txt";
+    char *file1 = "../datasets/1.txt";
+    char *file2 = "../datasets/2.txt";
+    char *file3 = "../datasets/3.txt";
+    char *file4 = "../datasets/4.txt";
+    char *file5 = "../datasets/5.txt";
+    char *file6 = "../datasets/6.txt";
     switch (s) {
         case 1:
             file_input(field, hi, hj, ti, tj, file1);
@@ -133,9 +133,9 @@ void move(int **field, int *hi, int *hj, int *ti, int *tj, int direction) {
             *tj = (*tj - 1 + N) % N;
             break;
     }
-    field[*hi][*hj] = 1;
+    field[*hi][*hj] = 2;
     field[*ti][*tj] = 0;
-
+    
 }
 
 // поедание "яблока"
@@ -148,7 +148,10 @@ void eat(int **field, int *hi, int *hj, int *ti, int *tj, int *size) {
     стеной или с самой змейкой
 */
 int is_collision(int **field, int hi, int hj) {
-    return 0;
+    int result = 0;
+    if (field[hi][hj] == 1 || field[hi][hj] == 2)
+        result = 1;
+    return result;
 }
 
 // отрисовка поля
