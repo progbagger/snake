@@ -18,6 +18,8 @@ int input_start_pos();
 int control(int *status, int *direction);
 void print_map(snake *s, int **field, int status);
 int file_input(snake *s, int **field, char *file);
+void print_head(snake *s, int **field);
+void clear_tail(snake *s, int **field);
 
 int main() {
     work();
@@ -27,16 +29,18 @@ int main() {
 // основная работяга
 void work() {
     int **field = mem_alloc();
-    snake s;
+    snake *s = init();
     int dir = 0, status = 0;
-    start_field(&s, field, input_start_pos());
+    start_field(s, field, input_start_pos());
     while (!status) {
         control(&status, &dir);
-        move(&s, dir);
-        eat(&s);
-        if (is_collision(&s, field))
+        move(s, dir);
+        print_head(s, field);
+        eat(s);
+        if (is_collision(s, field))
             status = 1;
-        print_map(&s, field, status);
+        print_map(s, field, status);
+        clear_tail(s, field);
         usleep(500000);
     }
 }
@@ -133,18 +137,18 @@ void mem_free(int **arr) {
 void move(snake *s, int direction) {
     switch (direction) {
         case 0:
-            move_snake(s, s->head->i + 1, s->head->j);
-            break;
-        case 1:
             move_snake(s, s->head->i, s->head->j + 1);
             break;
-        case 2:
-            move_snake(s, s->head->i - 1, s->head->j);
+        case 1:
+            move_snake(s, s->head->i + 1, s->head->j);
             break;
-        case 3:
+        case 2:
             move_snake(s, s->head->i, s->head->j - 1);
             break;
-    }    
+        case 3:
+            move_snake(s, s->head->i - 1, s->head->j);
+            break;
+    }
 }
 
 // поедание "яблока"
@@ -163,6 +167,19 @@ int is_collision(snake *s, int **field) {
     return result;
 }
 
+void print_head(snake *s, int **field) {
+    struct node *p = s->head;
+    field[p->i][p->j] = 2;
+}
+
+void clear_tail(snake *s, int **field) {
+    struct node *p = s->head;
+    while (p != NULL) {
+        p = p->next;
+    }
+    field[p->i][p->j] = 0;
+}
+
 // отрисовка поля
 void print_map(snake *s, int **field, int status) {
     system("clear");
@@ -170,7 +187,9 @@ void print_map(snake *s, int **field, int status) {
         for (int j = 0; j < M; j++) {
             if (field[i][j] == 1 || field[i][j] == 2) {
                 printf("#");
-            } else { printf(" "); }
+            } else {
+                printf(" ");
+            }
         }
     printf("\n");
     }
