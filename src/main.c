@@ -4,8 +4,8 @@
 
 #include "snake.h"
 
-#define N 54
-#define M 84
+#define N 40
+#define M 40
 
 int **mem_alloc();
 void mem_free(int **arr);
@@ -137,16 +137,16 @@ void mem_free(int **arr) {
 void move(snake *s, int direction) {
     switch (direction) {
         case 0:
-            move_snake(s, s->head->i, s->head->j + 1);
+            move_snake(s, s->head->i, (s->head->j + 1 + M) % M);
             break;
         case 1:
-            move_snake(s, s->head->i + 1, s->head->j);
+            move_snake(s, (s->head->i + 1 + N) % N, s->head->j);
             break;
         case 2:
-            move_snake(s, s->head->i, s->head->j - 1);
+            move_snake(s, s->head->i, (s->head->j - 1 + M) % M);
             break;
         case 3:
-            move_snake(s, s->head->i - 1, s->head->j);
+            move_snake(s, (s->head->i - 1 + N) % N, s->head->j);
             break;
     }
 }
@@ -162,7 +162,7 @@ void eat(snake *s) {
 */
 int is_collision(snake *s, int **field) {
     int result = 0;
-    if (field[s->head->i][s->head->j] == 1 || field[s->head->i][s->head->j] == 2)
+    if (field[s->head->i][s->head->j] == 1)
         result = 1;
     return result;
 }
@@ -174,7 +174,7 @@ void print_head(snake *s, int **field) {
 
 void clear_tail(snake *s, int **field) {
     struct node *p = s->head;
-    while (p != NULL) {
+    while (p->next != NULL) {
         p = p->next;
     }
     field[p->i][p->j] = 0;
