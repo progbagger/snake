@@ -1,22 +1,22 @@
 #ifndef SRC_SNAKE_H_
 #define SRC_SNAKE_H_
 
-struct node {
-    int i, j;
-    struct node *next;
-};
+#include <stdio.h>
 
-typedef struct stack {
-    struct node *head;
-    int size;
-} snake;
+#include "queue.h"
 
-snake *init();
-snake *push_back(snake *head, int ii, int jj);
-snake *push_forward(snake *head, int ii, int jj);
-void destroy(snake *head);
-void delete_tail(snake *head);
+typedef struct {
+    Queue *q;
+    size_t size;
+    Point *head, *tail;
+    Point direction;
+} Snake;
 
-void move_snake(snake *head, int ii, int jj);
+Snake *init_snake();
+void destroy_snake(Snake *s);
+void snake_move(Snake *s, Point h);
+void snake_turn(Snake *s, Point direction);
+void snake_eat(Snake *s, Point h);
+int is_snake_stopped(Snake *s);
 
 #endif  // SRC_SNAKE_H_

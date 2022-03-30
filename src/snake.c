@@ -1,66 +1,35 @@
 #include "snake.h"
-#include <stdlib.h>
+#include "defines.h"
 
-snake *init() {
-    snake *p = NULL;
-    p = malloc(sizeof(snake));
-    p->size = 0;
-    p->head = NULL;
-    return p;
+int is_snake_stopped(Snake *s) {
+    int result = 0;
+    if (!s->direction.x && !s->direction.y)
+        result = 1;
+    return result;
 }
 
-snake *push_back(snake *head, int ii, int jj) {
-    struct node *result = malloc(sizeof(struct node));
-    head->size++;
-    result->i = ii;
-    result->j = jj;
-    result->next = NULL;
-    struct node *p = head->head;
-    if (p == NULL) {
-        p = result;
-    } else {
-        while (p->next != NULL)
-            p = p->next;
-        p->next = result;
-    }
-    return head;
+Snake *init_snake() {
+    Snake *s = (Snake*) malloc(sizeof(Snake));
+    s->head = NULL;
+    s->tail = NULL;
+    s->size = 0;
+    s->direction = create_point(0, 0);
+    s->q = init_queue();
 }
 
-snake *push_forward(snake *head, int ii, int jj) {
-    struct node *p = malloc(sizeof(struct node));
-    head->size++;
-    p->i = ii;
-    p->j = jj;
-    if (head->head == NULL) {
-        head->head = p;
-        p->next = NULL;
-    } else {
-        p->next = head->head->next;
-        head->head = p;
-    }
-    return head;
+void destroy_snake(Snake *s) {
+    destroy_queue(s->q);
+    free(s);
 }
 
-void destroy(snake *head) {
-    struct node *p = head->head;
-    while (p != NULL) {
-        struct node *pp = p;
-        p = p->next;
-        free(pp);
-    }
-    free(head);
+void snake_turn(Snake *s, Point direction) {
+
 }
 
-void move_snake(snake *head, int ii, int jj) {
-    delete_tail(head);
-    push_forward(head, ii, jj);
+void snake_move(Snake *s, Point h) {
+
 }
 
-void delete_tail(snake *head) {
-    struct node *p = head->head;
-    while (p->next != NULL) {
-        p = p->next;
-    }
-    if (p != NULL)
-        free(p);
+void snake_eat(Snake *s, Point h) {
+
 }
