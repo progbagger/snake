@@ -19,6 +19,7 @@ typedef struct {
 Queue *init_queue();
 void destroy_queue(Queue *q);
 void push_queue(Queue *q, Point value);
+void push_queue_first(Queue *q, Point value);
 Point pop_queue(Queue *q);
 int is_queue_empty(Queue *q);
 

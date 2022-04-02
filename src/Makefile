@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra
 MAIN = main.c
-CFILES = game.c queue.c snake.c
+CFILES = queue.c snake.c
 OBJECTS = $(CFILES:.c=.o)
 EXEC = snake
 P = ../build/

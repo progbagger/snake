@@ -35,6 +35,14 @@ void push_queue(Queue *q, Point value) {
         q->first = q->last;
 }
 
+void push_queue_first(Queue *q, Point value) {
+    struct node *elem = (struct node*) malloc(sizeof(struct node));
+    elem->data = value;
+    elem->next = NULL;
+    q->first->next = elem;
+    q->first = elem;
+}
+
 Point pop_queue(Queue *q) {
     struct node *elem = q->first;
     struct node *temp = q->last;
