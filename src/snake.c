@@ -38,6 +38,7 @@ Snake *init_snake() {
     s->direction = create_point(0, 0);
     s->q = init_queue();
     s->field = NULL;
+    s->speed = 0;
     return s;
 }
 
@@ -63,14 +64,13 @@ Snake *read_file(const char *file) {
     }
     s->head = &s->q->last->data;
     s->tail = &s->q->first->data;
-    printf("YAY!\n");
     s->field = mem_alloc(s->x, s->y);
     for (size_t i = 0; i < s->y; i++)
         for (size_t j = 0; j < s->x; j++)
             fscanf(f, "%d", &s->field[i][j]);
     struct node *temp = s->q->last;
     while (temp) {
-        s->field[temp->data.y][temp->data.x] = 1;
+        s->field[temp->data.y][temp->data.x] = 3;
         temp = temp->next;
     }
     fclose(f);
@@ -78,17 +78,53 @@ Snake *read_file(const char *file) {
     return s;
 }
 
+void menu() {
+    printf("Choose level:\n");
+    printf("1 - Classic square level with walls\n");
+    printf("2 - Classic square level without walls\n");
+}
+
+void speed() {
+    printf("Choose speed:\n");
+    printf("1 - Very low speed\n");
+    printf("2 - Medium speed\n");
+    printf("3 - High speed\n");
+    printf("4 - Veterans\n");
+}
+
+int set_speed(int s) {
+    int result = 0;
+    switch (s) {
+        case 1:
+            result = 500000;
+            break;
+        case 2:
+            result = 250000;
+            break;
+        case 3:
+            result = 80000;
+            break;
+        case 4:
+            result = 50000;
+            break;
+    }
+    return result;
+}
+
 Snake *create_game() {
     int n;
     Snake *s = NULL;
-    const char
-        file_1[] = "../datasets/1.txt";
+    const char *files[] = {
+        "../datasets/empty_with_walls.txt",
+        "../datasets/empty.txt"
+    };
+    menu();
     scanf("%d", &n);
-    switch (n) {
-        case 1:
-            s = read_file(file_1);
-            break;
-    }
+    speed();
+    int speed;
+    scanf("%d", &speed);
+    s = read_file(files[n - 1]);
+    s->speed = set_speed(speed);
     srand(time(NULL));
     return s;
 }
@@ -106,6 +142,7 @@ void snake_turn(Snake *s, Point direction) {
 int snake_add_head(Snake *s) {
     int result = 0;
     int x, y;
+    int check = 0;
     if (!s->walls) {
         x = (s->head->x + s->direction.x + s->x) % s->x;
         y = (s->head->y + s->direction.y + s->y) % s->y;
@@ -114,14 +151,21 @@ int snake_add_head(Snake *s) {
         y = s->head->y + s->direction.y;
     }
     Point next_head = create_point(x, y);
-    if (s->field[y][x] == 2)
-        result = 1;
-    else if (s->field[y][x] == 1)
+    // ! x and y can be only in range [0; s->x - 1] and [0; s->y - 1]
+    if ((y >= (int) s->y || y < 0 || x >= (int) s->x || x < 0) && s->walls) {
         result = 2;
-    push_queue(s->q, next_head);
-    s->field[y][x] = 1;
-    s->head = &s->q->last->data;
-    s->size += 1;
+        check = 1;
+    } else if (s->field[y][x] == 2) {
+        result = 1;
+    } else if (s->field[y][x] == 1 || s->field[y][x] == 3) {
+        result = 2;
+    }
+    if (!check) {
+        push_queue(s->q, next_head);
+        s->field[y][x] = 3;
+        s->head = &s->q->last->data;
+        s->size += 1;
+    }
     return result;
 }
 
@@ -171,7 +215,7 @@ int controls(Snake *s) {
 
 void generate_apple(Snake *s) {
     int x = rand() % s->x, y = rand() % s->y;
-    while (s->field[y][x] == 1) {
+    while (s->field[y][x] == 1 || s->field[y][x] == 3) {
         srand(time(NULL));
         x = rand() % s->x;
         y = rand() % s->y;
@@ -183,33 +227,35 @@ void print_field(Snake *s) {
     system("clear");
     for (size_t i = 0; i < s->x + 2; i++) {
         if (s->walls)
-            printf("██");
+            printf("%s██%s", WHITE, RESET);
         else
-            printf("░░");
+            printf("%s░░%s", GRAY, RESET);
     }
     printf("\n");
     for (size_t i = 0; i < s->y; i++) {
         for (size_t j = 0; j < s->x + 2; j++) {
             if (j == 0 || j == s->x + 1) {
                 if (s->walls)
-                    printf("██");
+                    printf("%s██%s", WHITE, RESET);
                 else
-                    printf("░░");
+                    printf("%s░░%s", GRAY, RESET);
             } else if (s->field[i][j - 1] == 1) {
-                printf("██");
+                printf("%s██%s", WHITE, RESET);
             } else if (s->field[i][j - 1] == 0) {
-                printf("  ");
+                printf("%s  %s", BLACK, RESET);
             } else if (s->field[i][j - 1] == 2) {
-                printf("▒▒");
+                printf("%s██%s", RED, RESET);
+            } else if (s->field[i][j - 1] == 3) {
+                printf("%s██%s", GREEN, RESET);
             }
         }
         printf("\n");
     }
     for (size_t i = 0; i < s->x + 2; i++) {
         if (s->walls)
-            printf("██");
+            printf("%s██%s", WHITE, RESET);
         else
-            printf("░░");
+            printf("%s░░%s", GRAY, RESET);
     }
     printf("\n");
 }
@@ -222,12 +268,14 @@ void game() {
         int check = snake_add_head(s);
         if (check == 0)
             snake_remove_tail(s);
-        else if (check == 2)
+        else if (check == 2) {
+            printf("Game over!");
             break;
+        }
         else if (check == 1)
             generate_apple(s);
         print_field(s);
-        usleep(200000);
+        usleep(s->speed);
     }
     destroy_snake(s);
 }

@@ -13,6 +13,7 @@ typedef struct {
     Point *head, *tail;
     Point direction;
     int **field;
+    int speed;
 } Snake;
 
 Snake *init_snake();
