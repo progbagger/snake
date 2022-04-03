@@ -17,4 +17,10 @@
 #define BLACK "\033[30;40m"
 #define GRAY "\033[1;37m"
 
+#define WALLS "%s██%s", WHITE, RESET
+#define EDGES "%s░░%s", GRAY, RESET
+#define SPACE "%s  %s", BLACK, RESET
+#define APPLE "%s██%s", RED, RESET
+#define SNAKE "%s██%s", GREEN, RESET
+
 #endif  // SRC_DEFINES_H_

@@ -227,35 +227,35 @@ void print_field(Snake *s) {
     system("clear");
     for (size_t i = 0; i < s->x + 2; i++) {
         if (s->walls)
-            printf("%s██%s", WHITE, RESET);
+            printf(WALLS);
         else
-            printf("%s░░%s", GRAY, RESET);
+            printf(EDGES);
     }
     printf("\n");
     for (size_t i = 0; i < s->y; i++) {
         for (size_t j = 0; j < s->x + 2; j++) {
             if (j == 0 || j == s->x + 1) {
                 if (s->walls)
-                    printf("%s██%s", WHITE, RESET);
+                    printf(WALLS);
                 else
-                    printf("%s░░%s", GRAY, RESET);
+                    printf(EDGES);
             } else if (s->field[i][j - 1] == 1) {
-                printf("%s██%s", WHITE, RESET);
+                printf(WALLS);
             } else if (s->field[i][j - 1] == 0) {
-                printf("%s  %s", BLACK, RESET);
+                printf(SPACE);
             } else if (s->field[i][j - 1] == 2) {
-                printf("%s██%s", RED, RESET);
+                printf(APPLE);
             } else if (s->field[i][j - 1] == 3) {
-                printf("%s██%s", GREEN, RESET);
+                printf(SNAKE);
             }
         }
         printf("\n");
     }
     for (size_t i = 0; i < s->x + 2; i++) {
         if (s->walls)
-            printf("%s██%s", WHITE, RESET);
+            printf(WALLS);
         else
-            printf("%s░░%s", GRAY, RESET);
+            printf(EDGES);
     }
     printf("\n");
 }
