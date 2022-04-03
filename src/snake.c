@@ -85,8 +85,15 @@ void menu_level() {
 
 // Input level int
 int input_level() {
-    int result;
-    scanf("%d", &result);
+    int result = 0;
+    int check = scanf("%d", &result);
+    while (getchar() != '\n') {}
+    while (!check || (result < 1 || result > 2)) {
+        printf("Incorrect input. Please, try again.\n");
+        check = scanf("%d", &result);
+        while (getchar() != '\n') {}
+    }
+    return result;
 }
 
 // Printing game menu for speed
@@ -96,6 +103,19 @@ void menu_speed() {
     printf("2 - Medium speed\n");
     printf("3 - High speed\n");
     printf("4 - Veterans\n");
+}
+
+// Input speed int while user does not input correct value
+int input_speed() {
+    int result = 0;
+    int check = scanf("%d", &result);
+    while (getchar() != '\n') {}
+    while (!check || (result < 1 || result > 4)) {
+        printf("Incorrect input. Please, try again.\n");
+        check = scanf("%d", &result);
+        while (getchar() != '\n') {}
+    }
+    return result;
 }
 
 // Setting speed of snake
@@ -120,17 +140,15 @@ int set_speed(int s) {
 
 // Choosing level for game
 Snake *create_game() {
-    int n;
     Snake *s = NULL;
     const char *files[] = {
         "../datasets/empty_with_walls.txt",
         "../datasets/empty.txt"
     };
     menu_level();
-    scanf("%d", &n);
+    int n = input_level();
     menu_speed();
-    int speed;
-    scanf("%d", &speed);
+    int speed = input_speed();
     s = read_file(files[n - 1]);
     s->speed = set_speed(speed);
     srand(time(NULL));

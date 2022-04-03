@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Creating point in x y coordinates
 Point create_point(int x, int y) {
     Point result;
     result.x = x;
@@ -10,6 +11,7 @@ Point create_point(int x, int y) {
     return result;
 }
 
+// Initiating queue to work with it
 Queue *init_queue() {
     Queue *q = (Queue*) malloc(sizeof(Queue));
     q->first = NULL;
@@ -17,6 +19,7 @@ Queue *init_queue() {
     return q;
 }
 
+// Freeing memory of queue
 void destroy_queue(Queue *q) {
     while (q->last) {
         struct node *elem = q->last;
@@ -26,6 +29,7 @@ void destroy_queue(Queue *q) {
     free(q);
 }
 
+// Add element into queue head
 void push_queue(Queue *q, Point value) {
     struct node *elem = (struct node*) malloc(sizeof(struct node));
     elem->data = value;
@@ -35,6 +39,7 @@ void push_queue(Queue *q, Point value) {
         q->first = q->last;
 }
 
+// Add element into queue last (forbidden!)
 void push_queue_first(Queue *q, Point value) {
     struct node *elem = (struct node*) malloc(sizeof(struct node));
     elem->data = value;
@@ -43,6 +48,7 @@ void push_queue_first(Queue *q, Point value) {
     q->first = elem;
 }
 
+// Delete first element from queue
 Point pop_queue(Queue *q) {
     struct node *elem = q->first;
     struct node *temp = q->last;
@@ -64,6 +70,7 @@ Point pop_queue(Queue *q) {
     return result;
 }
 
+// Check if queue is empty
 int is_queue_empty(Queue *q) {
     int result = 1;
     if (q->first)
