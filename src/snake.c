@@ -6,6 +6,22 @@
 #include <time.h>
 #include <termios.h>
 #include <unistd.h>
+#include <string.h>
+
+// Input an string from stdin
+char *str_input() {
+    char *str = NULL, c = getchar();
+    size_t size = 0;
+    while (c != '\n') {
+        char *tmp = str;
+        str = reallocarray(tmp, (++size) + 1, sizeof(char));
+        str[size - 1] = c;
+        c = getchar();
+    }
+    if (str)
+        str[size] = '\0';
+    return str;
+}
 
 // Allocating field
 int **mem_alloc(size_t x, size_t y) {
@@ -47,32 +63,105 @@ void destroy_snake(Snake *s) {
 
 // Reading game settings from file
 Snake *read_file(const char *file) {
+    printf("\033[1;33m---------------\033[0m\t%sReading file...\n", STATUS);
     FILE *f = fopen(file, "r");
-    Snake *s = init_snake();
-    fscanf(f, "%lu %lu", &s->x, &s->y);
-    fscanf(f, "%d", &s->walls);
-    int x, y;
-    fscanf(f, "%d %d", &x, &y);
-    s->direction = create_point(x, y);
-    fscanf(f, "%lu", &s->size);
-    for (size_t i = 0; i < s->size; i++) {
-        int p_x, p_y;
-        fscanf(f, "%d %d", &p_x, &p_y);
-        push_queue(s->q, create_point(p_x, p_y));
+    Snake *s = NULL;
+    int check = 1, input_count = 6, c_input = 0;
+    int scan_check;
+    if (f) {
+        s = init_snake();
+        if ((scan_check = fscanf(f, "%lu %lu", &s->x, &s->y)) != 2) {
+            check = 0;
+            printf("%s", ERROR);
+        } else {
+            c_input += 2;
+            input_count += (int) (s->x * s->y);
+            printf("%s", SUCCESS);
+        }
+        printf("Size reading\n");
+        if (!(scan_check = fscanf(f, "%d", &s->walls)) || (s->walls != 0 && s->walls != 1)) {
+            check = 0;
+            printf("%s", ERROR);
+        } else {
+            c_input += 1;
+            printf("%s", SUCCESS);
+        }
+        printf("Walls status reading\n");
+        int x, y;
+        if ((scan_check = fscanf(f, "%d %d", &x, &y)) != 2 || x < -1 || x > 1 || y < -1 || y > 1) {
+            check = 0;
+            printf("%s", ERROR);
+        } else {
+            c_input += 2;
+            printf("%s", SUCCESS);
+        }
+        printf("Initial direction reading\n");
+        s->direction = create_point(x, y);
+        if (!(scan_check = fscanf(f, "%lu", &s->size)) || s->size > s->x * s->y) {
+            check = 0;
+            printf("%s", ERROR);
+        } else {
+            c_input += 1;
+            input_count += (int) (s->size * 2);
+            printf("%s", SUCCESS);
+        }
+        printf("Snake size reading\n");
+        printf("%sReading snake segments coordinates\n", STATUS);
+        int snake_check = 1;
+        for (size_t i = 0; i < s->size; i++) {
+            int p_x, p_y;
+            if ((scan_check = fscanf(f, "%d %d", &p_x, &p_y)) != 2 || (p_x < 0 || p_x > (int) (s->x - 1)) || (p_y < 0 || p_y > (int) (s->y - 1))) {
+                check = 0;
+                snake_check = 0;
+                printf("  %sReading %lu segment\n", ERROR, i);
+            } else {
+                c_input += 2;
+            }
+            push_queue(s->q, create_point(p_x, p_y));
+        }
+        if (snake_check)
+            printf("%s", SUCCESS);
+        else
+            printf("%s", ERROR);
+        printf("Reading snake segments\n");
+        s->head = &s->q->last->data;
+        s->tail = &s->q->first->data;
+        s->field = mem_alloc(s->x, s->y);
+        int field_check = 1;
+        printf("%sReading field cells coordinates\n", STATUS);
+        for (size_t i = 0; i < s->y; i++)
+            for (size_t j = 0; j < s->x; j++) {
+                int cord = -1;
+                if (!(scan_check = fscanf(f, "%d", &cord)) || (cord != 0 && cord != 1)) {
+                    check = 0;
+                    field_check = 0;
+                    printf("  %sReading (%lu, %lu) coordinate\n", ERROR, j + 1, i + 1);
+                } else {
+                    s->field[i][j] = cord;
+                    c_input += 1;
+                }
+            }
+        if (field_check)
+            printf("%s", SUCCESS);
+        else
+            printf("%s", ERROR);
+        printf("Reading field\n");
+        struct node *temp = s->q->last;
+        while (temp) {
+            s->field[temp->data.y][temp->data.x] = 3;
+            temp = temp->next;
+        }
+        fclose(f);
+        printf("\033[1;33m---------------\033[0m\t%sClosing file...\n", STATUS);
+        if (check && c_input == input_count) {
+            generate_apple(s);
+        } else {
+            destroy_snake(s);
+            s = NULL;
+        }
+    } else {
+        printf("\033[1;31m---------------\033[0m\t%sFile does not exist\n", ERROR);
     }
-    s->head = &s->q->last->data;
-    s->tail = &s->q->first->data;
-    s->field = mem_alloc(s->x, s->y);
-    for (size_t i = 0; i < s->y; i++)
-        for (size_t j = 0; j < s->x; j++)
-            fscanf(f, "%d", &s->field[i][j]);
-    struct node *temp = s->q->last;
-    while (temp) {
-        s->field[temp->data.y][temp->data.x] = 3;
-        temp = temp->next;
-    }
-    fclose(f);
-    generate_apple(s);
     return s;
 }
 
@@ -82,15 +171,19 @@ void menu_level() {
     printf("1 - Classic square level with walls\n");
     printf("2 - Classic square level without walls\n");
     printf("3 - Interesting variant with quadrants\n");
+    printf("4 - Your map\n");
 }
 
 // Input level int
 int input_level() {
     int result = 0;
+    printf("Your choice: ");
     int check = scanf("%d", &result);
     while (getchar() != '\n') {}
-    while (!check || (result < 1 || result > 3)) {
-        printf("Incorrect input. Please, try again.\n");
+    while (!check || (result < 1 || result > 4)) {
+        printf("%sIncorrect input for %slevel number%s. Please, try again.\n", ERROR, BLUE, RESET);
+        menu_level();
+        printf("Your choice: ");
         check = scanf("%d", &result);
         while (getchar() != '\n') {}
     }
@@ -109,10 +202,13 @@ void menu_speed() {
 // Input speed int while user does not input correct value
 int input_speed() {
     int result = 0;
+    printf("Your choice: ");
     int check = scanf("%d", &result);
     while (getchar() != '\n') {}
     while (!check || (result < 1 || result > 4)) {
-        printf("Incorrect input. Please, try again.\n");
+        printf("%sIncorrect input for %ssnake speed%s. Please, try again.\n", ERROR, BLUE, RESET);
+        menu_speed();
+        printf("Your choice: ");
         check = scanf("%d", &result);
         while (getchar() != '\n') {}
     }
@@ -147,13 +243,27 @@ Snake *create_game() {
         "../datasets/empty.txt",
         "../datasets/inner_walls.txt"
     };
+    const int files_count = 3;
     menu_level();
     int n = input_level();
-    menu_speed();
-    int speed = input_speed();
-    s = read_file(files[n - 1]);
-    s->speed = set_speed(speed);
-    srand(time(NULL));
+    if (n <= files_count) {
+        s = read_file(files[n - 1]);
+    } else {
+        printf("Path to your map: ");
+        char *str = str_input();
+        s = read_file(str);
+        if (str)
+            free(str);
+    }
+    if (s) {
+        GLOBAL_FILE_SUCCESS_MESSAGE;
+        menu_speed();
+        int speed = input_speed();
+        s->speed = set_speed(speed);
+        srand(time(NULL));
+    } else {
+        GLOBAL_FILE_ERROR_MESSAGE;
+    }
     return s;
 }
 
@@ -233,16 +343,18 @@ char getch() {
 int controls(Snake *s) {
     int result = 0;
     char c = getch();
-    if (c == 'w')
+    if (c == 'w') {
         snake_turn(s, FORWARD);
-    else if (c == 'a')
+    } else if (c == 'a') {
         snake_turn(s, LEFT);
-    else if (c == 'd')
+    } else if (c == 'd') {
         snake_turn(s, RIGHT);
-    else if (c == 's')
+    } else if (c == 's') {
         snake_turn(s, DOWN);
-    else if (c == 'x')
+    } else if (c == 'x') {
         result = 1;
+        EXIT_GAME;
+    }
     return result;
 }
 
@@ -301,22 +413,24 @@ void print_field(Snake *s) {
 // Main game function
 void game() {
     Snake *s = create_game();
-    print_field(s);
-    usleep(s->speed);
-    while (1) {
-        if (controls(s))
-            break;
-        int check = snake_add_head(s);
-        if (check == 0)
-            snake_remove_tail(s);
-        else if (check == 2) {
-            printf("Game over!");
-            break;
-        }
-        else if (check == 1)
-            generate_apple(s);
+    if (s) {
         print_field(s);
         usleep(s->speed);
+        while (1) {
+            if (controls(s))
+                break;
+            int check = snake_add_head(s);
+            if (check == 0)
+                snake_remove_tail(s);
+            else if (check == 2) {
+                printf("Game over!");
+                break;
+            }
+            else if (check == 1)
+                generate_apple(s);
+            print_field(s);
+            usleep(s->speed);
+        }
+        destroy_snake(s);
     }
-    destroy_snake(s);
 }

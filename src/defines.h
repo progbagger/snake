@@ -4,6 +4,19 @@
 #include "queue.h"
 
 /*
+    Errors and statuses
+*/
+
+#define ERROR "\033[1;31m[ ERROR ]\033[0m - "
+#define SUCCESS "\033[1;32m[ SUCCESS ]\033[0m - "
+#define STATUS "\033[1;33m[ STATUS ]\033[0m - "
+
+#define GLOBAL_FILE_ERROR_MESSAGE printf("\033[1;31m--------------- %sFile does not read correctly. \033[1;33mExiting...\033[0m\n", ERROR)
+#define GLOBAL_FILE_SUCCESS_MESSAGE printf("\033[1;32m--------------- %sFile read correctly\n", SUCCESS)
+
+#define EXIT_GAME printf("%s\033[1;33mExiting...\033[0m\n", STATUS)
+
+/*
     Sides of possible snake turns
 */
 #define RIGHT create_point(1, 0)
@@ -22,6 +35,7 @@
 #define BLACK "\033[30;40m"
 #define GRAY "\033[1;37m"
 #define YELLOW "\033[1;33m"
+#define BLUE "\033[1;34m"
 
 /*
     Defines to beautificate and simplify
