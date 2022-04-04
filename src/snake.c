@@ -44,6 +44,7 @@ Snake *init_snake() {
     s->head = NULL;
     s->tail = NULL;
     s->size = 0;
+    s->eaten_apples = 0;
     s->walls = -1;
     s->x = 0;
     s->y = 0;
@@ -97,17 +98,23 @@ Snake *read_file(const char *file) {
         }
         printf("Initial direction reading\n");
         s->direction = create_point(x, y);
-        if (!(scan_check = fscanf(f, "%lu", &s->size)) || s->size > s->x * s->y) {
+        int snake_size = -1;
+        if (!(scan_check = fscanf(f, "%d", &snake_size)) || (size_t) snake_size > s->x * s->y || snake_size < 0) {
             check = 0;
             printf("%s", ERROR);
         } else {
             c_input += 1;
+            s->size = (size_t) snake_size;
             input_count += (int) (s->size * 2);
             printf("%s", SUCCESS);
         }
         printf("Snake size reading\n");
-        printf("%sReading snake segments coordinates\n", STATUS);
+        printf("%sReading snake segments\n", STATUS);
         int snake_check = 1;
+        if (s->size == 0) {
+            printf("  %sSnake size is 0, no segments to read\n", ERROR);
+            snake_check = 0;
+        }
         for (size_t i = 0; i < s->size; i++) {
             int p_x, p_y;
             if ((scan_check = fscanf(f, "%d %d", &p_x, &p_y)) != 2 || (p_x < 0 || p_x > (int) (s->x - 1)) || (p_y < 0 || p_y > (int) (s->y - 1))) {
@@ -128,7 +135,11 @@ Snake *read_file(const char *file) {
         s->tail = &s->q->first->data;
         s->field = mem_alloc(s->x, s->y);
         int field_check = 1;
-        printf("%sReading field cells coordinates\n", STATUS);
+        printf("%sReading field\n", STATUS);
+        if (s->x == 0 && s->y == 0) {
+            field_check = 0;
+            printf("  %sField size is 0, no coordinates to read\n", ERROR);
+        }
         for (size_t i = 0; i < s->y; i++)
             for (size_t j = 0; j < s->x; j++) {
                 int cord = -1;
@@ -229,7 +240,7 @@ int set_speed(int s) {
             result = 80000;
             break;
         case 4:
-            result = 50000;
+            result = 62500;
             break;
     }
     return result;
@@ -295,8 +306,11 @@ int snake_add_head(Snake *s) {
     if ((y >= (int) s->y || y < 0 || x >= (int) s->x || x < 0) && s->walls) {
         result = 2;
         check = 1;
+    // * Apple encounter
     } else if (s->field[y][x] == 2) {
         result = 1;
+        s->eaten_apples += 1;
+    // * Collision handle
     } else if (s->field[y][x] == 1 || s->field[y][x] == 3) {
         result = 2;
     }
@@ -372,6 +386,12 @@ void generate_apple(Snake *s) {
 // Printing game field on screen
 void print_field(Snake *s) {
     system("clear");
+    printf("%sSnake game%s %s|%s ", GREEN, RESET, BLUE, RESET);
+    printf("%sSize:%s %s%-4lu%s %s|%s %sApples:%s %s%-4lu%s", BLUE, RESET, GREEN, s->size, RESET, BLUE, RESET, BLUE, RESET, RED, s->eaten_apples, RESET);
+    printf(" %s|%s ", BLUE, RESET);
+    double speed = 1000000 / s->speed;
+    printf("%sSpeed:%s %s%-5.2lf%s ", BLUE, RESET, YELLOW, speed, RESET);
+    printf("%scells/sec%s\n", BLUE, RESET);
     for (size_t i = 0; i < s->x + 2; i++) {
         if (s->walls)
             printf(WALLS);
@@ -412,13 +432,15 @@ void print_field(Snake *s) {
 
 // Main game function
 void game() {
+    system("clear");
     Snake *s = create_game();
     if (s) {
         print_field(s);
         usleep(s->speed);
         while (1) {
-            if (controls(s))
+            if (controls(s)) {
                 break;
+            }
             int check = snake_add_head(s);
             if (check == 0)
                 snake_remove_tail(s);
