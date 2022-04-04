@@ -42,7 +42,7 @@
     future management of code
 */
 
-#define WALLS "%s██%s", WHITE, RESET
+#define WALLS "%s██%s", BLUE, RESET
 #define EDGES "%s░░%s", GRAY, RESET
 #define SPACE "%s  %s", BLACK, RESET
 #define APPLE "%s██%s", RED, RESET

@@ -8,6 +8,7 @@
 typedef struct {
     Queue *q;
     size_t size;
+    size_t eaten_apples;
     size_t x, y;
     int walls;
     Point *head, *tail;
