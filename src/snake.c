@@ -303,20 +303,20 @@ void game() {
     Snake *s = create_game();
     print_field(s);
     usleep(s->speed);
-    // while (1) {
-    //     if (controls(s))
-    //         break;
-    //     int check = snake_add_head(s);
-    //     if (check == 0)
-    //         snake_remove_tail(s);
-    //     else if (check == 2) {
-    //         printf("Game over!");
-    //         break;
-    //     }
-    //     else if (check == 1)
-    //         generate_apple(s);
-    //     print_field(s);
-    //     usleep(s->speed);
-    // }
+    while (1) {
+        if (controls(s))
+            break;
+        int check = snake_add_head(s);
+        if (check == 0)
+            snake_remove_tail(s);
+        else if (check == 2) {
+            printf("Game over!");
+            break;
+        }
+        else if (check == 1)
+            generate_apple(s);
+        print_field(s);
+        usleep(s->speed);
+    }
     destroy_snake(s);
 }
