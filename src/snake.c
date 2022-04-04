@@ -81,6 +81,7 @@ void menu_level() {
     printf("Choose level:\n");
     printf("1 - Classic square level with walls\n");
     printf("2 - Classic square level without walls\n");
+    printf("3 - Interesting variant with quadrants\n");
 }
 
 // Input level int
@@ -88,7 +89,7 @@ int input_level() {
     int result = 0;
     int check = scanf("%d", &result);
     while (getchar() != '\n') {}
-    while (!check || (result < 1 || result > 2)) {
+    while (!check || (result < 1 || result > 3)) {
         printf("Incorrect input. Please, try again.\n");
         check = scanf("%d", &result);
         while (getchar() != '\n') {}
@@ -143,7 +144,8 @@ Snake *create_game() {
     Snake *s = NULL;
     const char *files[] = {
         "../datasets/empty_with_walls.txt",
-        "../datasets/empty.txt"
+        "../datasets/empty.txt",
+        "../datasets/inner_walls.txt"
     };
     menu_level();
     int n = input_level();
@@ -279,7 +281,10 @@ void print_field(Snake *s) {
             } else if (s->field[i][j - 1] == 2) {
                 printf(APPLE);
             } else if (s->field[i][j - 1] == 3) {
-                printf(SNAKE);
+                if ((int) i == s->head->y && (int) (j - 1) == s->head->x)
+                    printf(HEAD);
+                else
+                    printf(SNAKE);
             }
         }
         printf("\n");
@@ -296,20 +301,22 @@ void print_field(Snake *s) {
 // Main game function
 void game() {
     Snake *s = create_game();
-    while (1) {
-        if (controls(s))
-            break;
-        int check = snake_add_head(s);
-        if (check == 0)
-            snake_remove_tail(s);
-        else if (check == 2) {
-            printf("Game over!");
-            break;
-        }
-        else if (check == 1)
-            generate_apple(s);
-        print_field(s);
-        usleep(s->speed);
-    }
+    print_field(s);
+    usleep(s->speed);
+    // while (1) {
+    //     if (controls(s))
+    //         break;
+    //     int check = snake_add_head(s);
+    //     if (check == 0)
+    //         snake_remove_tail(s);
+    //     else if (check == 2) {
+    //         printf("Game over!");
+    //         break;
+    //     }
+    //     else if (check == 1)
+    //         generate_apple(s);
+    //     print_field(s);
+    //     usleep(s->speed);
+    // }
     destroy_snake(s);
 }

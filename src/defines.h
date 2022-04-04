@@ -21,6 +21,7 @@
 #define WHITE "\033[1;37m"
 #define BLACK "\033[30;40m"
 #define GRAY "\033[1;37m"
+#define YELLOW "\033[1;33m"
 
 /*
     Defines to beautificate and simplify
@@ -32,5 +33,6 @@
 #define SPACE "%s  %s", BLACK, RESET
 #define APPLE "%s██%s", RED, RESET
 #define SNAKE "%s██%s", GREEN, RESET
+#define HEAD "%s██%s", YELLOW, RESET
 
 #endif  // SRC_DEFINES_H_
