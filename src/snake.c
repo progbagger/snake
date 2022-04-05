@@ -375,10 +375,15 @@ int controls(Snake *s) {
 // Generating apple in empty space of field
 void generate_apple(Snake *s) {
     int x = rand() % s->x, y = rand() % s->y;
-    while (s->field[y][x] == 1 || s->field[y][x] == 3) {
-        srand(time(NULL));
-        x = rand() % s->x;
-        y = rand() % s->y;
+    if (s->field[y][x] != 0) {
+        int check = 0;
+        for (; !check; y = (y + 1) % s->y) {
+            for (; s->field[y][x] != 0; x = (x + 1) % s->x) {
+                if (x == 0)
+                    y++;
+            }
+            check = 1;
+        }
     }
     s->field[y][x] = 2;
 }
