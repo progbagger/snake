@@ -430,6 +430,19 @@ void print_field(Snake *s) {
     printf("\n");
 }
 
+// Checks if player won the game
+int is_win(Snake *s) {
+    /*
+        Player can win the game if there are
+        no space to generate apple. In other words,
+        Player's snake situated at a whole game field.
+    */
+    int result = 0;
+    if (s->size == s->x * s->y)
+        result = 1;
+    return result;
+}
+
 // Main game function
 void game() {
     system("clear");
@@ -437,7 +450,7 @@ void game() {
     if (s) {
         print_field(s);
         usleep(s->speed);
-        while (1) {
+        while (s->size != s->x * s->y) {
             if (controls(s)) {
                 break;
             }
@@ -445,14 +458,19 @@ void game() {
             if (check == 0)
                 snake_remove_tail(s);
             else if (check == 2) {
-                printf("Game over!");
+                printf("\nOops, collision! Game over!");
                 break;
             }
-            else if (check == 1)
+            else if (check == 1 && !is_win(s))
                 generate_apple(s);
             print_field(s);
+            if (is_win(s)) {
+                printf("\nCongratulations! You won the game!");
+                break;
+            }
             usleep(s->speed);
         }
         destroy_snake(s);
+        usleep(500000);
     }
 }
