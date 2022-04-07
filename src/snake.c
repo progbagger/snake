@@ -12,14 +12,21 @@
 char *str_input() {
     char *str = NULL, c = getchar();
     size_t size = 0;
+    size_t mem_size = size;
     while (c != '\n') {
-        char *tmp = str;
-        str = reallocarray(tmp, (++size) + 1, sizeof(char));
-        str[size - 1] = c;
+        if (!mem_size || size == mem_size) {
+            char *tmp = str;
+            mem_size += 10;
+            str = reallocarray(tmp, mem_size, sizeof(char));
+        }
+        str[++size - 1] = c;
         c = getchar();
     }
-    if (str)
+    if (str) {
+        char *tmp = str;
+        str = reallocarray(tmp, size + 1, sizeof(char));
         str[size] = '\0';
+    }
     return str;
 }
 
