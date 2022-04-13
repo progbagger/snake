@@ -13,6 +13,7 @@ typedef struct {
     int walls;
     Point *head, *tail;
     Point direction;
+    Point apple;
     int **field;
     int speed;
 } Snake;
