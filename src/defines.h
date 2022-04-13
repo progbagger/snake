@@ -37,7 +37,7 @@
 #define RED "\033[1;31m"
 #define WHITE "\033[1;37m"
 #define BLACK "\033[30;40m"
-#define GRAY "\033[1;37m"
+#define GRAY "\033[2;37m"
 #define YELLOW "\033[1;33m"
 #define BLUE "\033[1;34m"
 
@@ -70,7 +70,7 @@
 */
 
 #define WALLS "%s██%s", BLUE, RESET
-#define EDGES "%s░░%s", GRAY, RESET
+#define EDGES "%s██%s", GRAY, RESET
 #define SPACE "%s  %s", BLACK, RESET
 #define APPLE "%s██%s", RED, RESET
 #define SNAKE "%s██%s", GREEN, RESET
