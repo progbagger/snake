@@ -539,7 +539,6 @@ void game() {
     Snake *s = create_game();
     if (s) {
         print_field(s);
-        usleep(s->speed);
         while (s->size != s->x * s->y) {
             if (controls(s)) {
                 break;
