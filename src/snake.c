@@ -50,6 +50,8 @@ Snake *init_snake() {
     Snake *s = (Snake*) malloc(sizeof(Snake));
     s->head = NULL;
     s->tail = NULL;
+    s->prev_head = create_point(0, 0);
+    s->prev_tail = create_point(0, 0);
     s->size = 0;
     s->eaten_apples = 0;
     s->walls = -1;
@@ -57,6 +59,7 @@ Snake *init_snake() {
     s->y = 0;
     s->direction = create_point(0, 0);
     s->apple = create_point(0, 0);
+    s->prev_apple = create_point(0, 0);
     s->q = init_queue();
     s->field = NULL;
     s->speed = 0;
@@ -341,13 +344,18 @@ void snake_turn(Snake *s, Point direction) {
 }
 
 void erase_head(Snake *s) {
-    MOVE_CURSOR(s->head->y + 2 + 1, s->head->x * 2 + 3);
+    MOVE_CURSOR(s->prev_head.y + 2 + 1, s->prev_head.x * 2 + 3);
     printf(SNAKE);
 }
 
 void erase_tail(Snake *s) {
-    MOVE_CURSOR(s->tail->y + 2 + 1, s->tail->x * 2 + 3);
+    MOVE_CURSOR(s->prev_tail.y + 2 + 1, s->prev_tail.x * 2 + 3);
     printf(SPACE);
+}
+
+void print_tail(Snake *s) {
+    MOVE_CURSOR(s->tail->y + 2 + 1, s->tail->x * 2 + 3);
+    printf(SNAKE);
 }
 
 void print_head(Snake *s) {
@@ -356,7 +364,7 @@ void print_head(Snake *s) {
 }
 
 void erase_apple(Snake *s) {
-    MOVE_CURSOR(s->apple.y + 2 + 1, s->apple.x * 2 + 3);
+    MOVE_CURSOR(s->prev_apple.y + 2 + 1, s->prev_apple.x * 2 + 3);
     printf(SPACE);
 }
 
@@ -365,10 +373,15 @@ void print_apple(Snake *s) {
     printf(APPLE);
 }
 
-void move_cursor_to_input_stroke(Snake *s) {
-    MOVE_CURSOR((int) (s->y + 2 + 2), 0);
-    printf("          ");
-    MOVE_CURSOR((int) (s->y + 2 + 2), 0);
+void change_field(Snake *s) {
+    MEMORISE_CURSOR;
+    erase_head(s);
+    print_head(s);
+    erase_tail(s);
+    print_tail(s);
+    erase_apple(s);
+    print_apple(s);
+    RETURN_CURSOR;
 }
 
 // Adding head to snake and checking for walls or apples
@@ -399,9 +412,8 @@ int snake_add_head(Snake *s) {
     if (!check) {
         push_queue(s->q, next_head);
         s->field[y][x] = 3;
-        erase_head(s);
+        s->prev_head = create_point(s->head->x, s->head->y);
         s->head = &s->q->last->data;
-        print_head(s);
         s->size += 1;
     }
     return result;
@@ -410,7 +422,7 @@ int snake_add_head(Snake *s) {
 // Removing tail of snake
 void snake_remove_tail(Snake *s) {
     s->field[s->tail->y][s->tail->x] = 0;
-    erase_tail(s);
+    s->prev_tail = create_point(s->tail->x, s->tail->y);
     pop_queue(s->q);
     s->tail = &s->q->first->data;
     s->size -= 1;
@@ -540,6 +552,7 @@ void game() {
     if (s) {
         print_field(s);
         while (s->size != s->x * s->y) {
+            usleep(s->speed);
             if (controls(s)) {
                 break;
             }
@@ -547,20 +560,17 @@ void game() {
             if (check == 0)
                 snake_remove_tail(s);
             else if (check == 2) {
-                move_cursor_to_input_stroke(s);
                 printf("\nOops, collision! Game over!");
                 break;
             }
             else if (check == 1 && !is_win(s))
                 generate_apple(s);
             // print_field(s);
+            change_field(s);
             if (is_win(s)) {
-                move_cursor_to_input_stroke(s);
                 printf("\nCongratulations! You won the game!");
                 break;
             }
-            move_cursor_to_input_stroke(s);
-            usleep(s->speed);
         }
         destroy_snake(s);
         usleep(500000);
