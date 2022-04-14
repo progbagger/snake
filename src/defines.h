@@ -61,8 +61,9 @@
 
 // Moving cursor in terminal at i j coordinates
 // depending on left upper corner
-#define MOVE_CURSOR(i, j) \
-    printf("\033[%d;%dH", i, j)
+#define MOVE_CURSOR(i, j) printf("\033[%d;%dH", i, j)
+#define MEMORISE_CURSOR printf("\033[s")
+#define RETURN_CURSOR printf("\033[u")
 
 /*
     Defines to beautificate and simplify
