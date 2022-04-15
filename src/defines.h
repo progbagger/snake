@@ -82,13 +82,13 @@
 */
 
 #define GAME_NAME "Snake"
+#define DISPLAY_EATEN_APPLES printf("%s%s%s ", BLUE, "Apples:", RESET)
+#define DISPLAY_SPEED printf("%s%s%s ", BLUE, "Speed:", RESET)
 
-#define DISPLAY_STATUS_BAR(snake_size, apples) printf("%sSize:%s %s%-4lu%s %s|%s %sApples:%s %s%-4lu%s", \
-BLUE, RESET, GREEN, snake_size, RESET, BLUE, RESET, BLUE, RESET, RED, apples, RESET)
+#define __SPEED(s) printf("%s%-5.2lf%s", YELLOW, s, RESET)
+#define __APPLES(a) printf("%s%-5lu%s", RED, a, RESET)
 
-#define DISPLAY_GAME_NAME(name) printf("%s%s%s", GREEN, name, RESET)
+#define DISPLAY_GAME_NAME printf("%s%s%s", GREEN, GAME_NAME, RESET)
 #define DISPLAY_SEPARATOR printf(" %s|%s ", BLUE, RESET)
-#define DISPLAY_SPEED(speed) printf("%sSpeed:%s %s%-5.2lf%s ", BLUE, RESET, YELLOW, speed, RESET);\
-                             printf("%scells/sec%s\n", BLUE, RESET)
 
 #endif  // SRC_DEFINES_H_
