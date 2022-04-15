@@ -374,14 +374,14 @@ void print_apple(Snake *s) {
 }
 
 void change_field(Snake *s) {
-    MEMORISE_CURSOR;
     erase_head(s);
     print_head(s);
     erase_tail(s);
     print_tail(s);
     erase_apple(s);
     print_apple(s);
-    RETURN_CURSOR;
+    MOVE_CURSOR((int) (s->y + 4), 0);
+    fflush(stdout);
 }
 
 // Adding head to snake and checking for walls or apples
@@ -432,7 +432,7 @@ void snake_remove_tail(Snake *s) {
 char getch() {
     char buf = 0;
     struct termios old = {0};
-    fflush(stdout);
+    // fflush(stdout);
     if (tcgetattr(0, &old) < 0)
         perror("tcsetattr()");
     old.c_lflag &= ~ICANON;
@@ -443,10 +443,10 @@ char getch() {
         perror("tcsetattr ICANON");
     if (read(0, &buf, 1) < 0)
         perror("read()");
-    // old.c_lflag |= ICANON;
+    old.c_lflag |= ICANON;
     // old.c_lflag |= ECHO;
-    // if (tcsetattr(0, TCSADRAIN, &old) < 0)
-    //     perror("tcsetattr ~ICANON");
+    if (tcsetattr(0, TCSADRAIN, &old) < 0)
+        perror("tcsetattr ~ICANON");
     return buf;
 }
 
@@ -480,7 +480,6 @@ void generate_apple(Snake *s) {
     s->field[y][x] = 2;
     s->apple.y = y;
     s->apple.x = x;
-    print_apple(s);
 }
 
 void print_wall(Snake *s) {
@@ -551,8 +550,8 @@ void game() {
     Snake *s = create_game();
     if (s) {
         print_field(s);
+        usleep(s->speed);
         while (s->size != s->x * s->y) {
-            usleep(s->speed);
             if (controls(s)) {
                 break;
             }
@@ -567,6 +566,7 @@ void game() {
                 generate_apple(s);
             // print_field(s);
             change_field(s);
+            usleep(s->speed);
             if (is_win(s)) {
                 printf("\nCongratulations! You won the game!");
                 break;
