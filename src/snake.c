@@ -195,12 +195,12 @@ int scan_field(FILE *f, Snake *s, int *c_input) {
     return check;
 }
 
-void valid_check(Snake *s, int check, int c_input, int input_count) {
-    if (check && c_input == input_count) {
-        generate_apple(s);
+void valid_check(Snake **s, int check, int c_input, int input_count) {
+    if (check && (c_input == input_count)) {
+        generate_apple(*s);
     } else {
-        destroy_snake(s);
-        s = NULL;
+        destroy_snake(*s);
+        *s = NULL;
     }
 }
 
@@ -212,18 +212,18 @@ Snake *read_file(const char *file) {
     int check = 1, input_count = 6, c_input = 0;
     if (f) {
         s = init_snake();
-        check = scan_f_size(f, &s->x, &s->y, &c_input, &input_count);
-        check = scan_w_status(f, &s->walls, &c_input);
+        check &= scan_f_size(f, &s->x, &s->y, &c_input, &input_count);
+        check &= scan_w_status(f, &s->walls, &c_input);
         int x, y;
-        check = scan_i_dir(f, &x, &y, &c_input);
+        check &= scan_i_dir(f, &x, &y, &c_input);
         s->direction = create_point(x, y);
         int snake_size = -1;
-        check = scan_s_size(f, s, &snake_size, &c_input, &input_count);
-        check = scan_s_segments(f, s, &c_input);
-        check = scan_field(f, s, &c_input);
+        check &= scan_s_size(f, s, &snake_size, &c_input, &input_count);
+        check &= scan_s_segments(f, s, &c_input);
+        check &= scan_field(f, s, &c_input);
         fclose(f);
         CLOSING_FILE;
-        valid_check(s, check, c_input, input_count);
+        valid_check(&s, check, c_input, input_count);
     } else {
         FILE_DOES_NOT_EXIST;
     }
