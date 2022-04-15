@@ -381,6 +381,11 @@ void change_field(Snake *s) {
     erase_apple(s);
     print_apple(s);
     MOVE_CURSOR((int) (s->y + 4), 0);
+    /*
+        ! To apply changes to game field there are
+        ! fflush(stdout) to put all printed symbols
+        ! into stdout
+    */
     fflush(stdout);
 }
 
