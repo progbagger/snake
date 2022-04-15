@@ -50,12 +50,16 @@ Snake *init_snake() {
     Snake *s = (Snake*) malloc(sizeof(Snake));
     s->head = NULL;
     s->tail = NULL;
+    s->prev_head = create_point(0, 0);
+    s->prev_tail = create_point(0, 0);
     s->size = 0;
     s->eaten_apples = 0;
     s->walls = -1;
     s->x = 0;
     s->y = 0;
     s->direction = create_point(0, 0);
+    s->apple = create_point(0, 0);
+    s->prev_apple = create_point(0, 0);
     s->q = init_queue();
     s->field = NULL;
     s->speed = 0;
@@ -339,6 +343,52 @@ void snake_turn(Snake *s, Point direction) {
     }
 }
 
+void erase_head(Snake *s) {
+    MOVE_CURSOR(s->prev_head.y + 2 + 1, s->prev_head.x * 2 + 3);
+    printf(SNAKE);
+}
+
+void erase_tail(Snake *s) {
+    MOVE_CURSOR(s->prev_tail.y + 2 + 1, s->prev_tail.x * 2 + 3);
+    printf(SPACE);
+}
+
+void print_tail(Snake *s) {
+    MOVE_CURSOR(s->tail->y + 2 + 1, s->tail->x * 2 + 3);
+    printf(SNAKE);
+}
+
+void print_head(Snake *s) {
+    MOVE_CURSOR(s->head->y + 2 + 1, s->head->x * 2 + 3);
+    printf(HEAD);
+}
+
+void erase_apple(Snake *s) {
+    MOVE_CURSOR(s->prev_apple.y + 2 + 1, s->prev_apple.x * 2 + 3);
+    printf(SPACE);
+}
+
+void print_apple(Snake *s) {
+    MOVE_CURSOR(s->apple.y + 2 + 1, s->apple.x * 2 + 3);
+    printf(APPLE);
+}
+
+void change_field(Snake *s) {
+    erase_head(s);
+    print_head(s);
+    erase_tail(s);
+    print_tail(s);
+    erase_apple(s);
+    print_apple(s);
+    MOVE_CURSOR((int) (s->y + 4), 0);
+    /*
+        ! To apply changes to game field there are
+        ! fflush(stdout) to put all printed symbols
+        ! into stdout
+    */
+    fflush(stdout);
+}
+
 // Adding head to snake and checking for walls or apples
 int snake_add_head(Snake *s) {
     int result = 0;
@@ -367,6 +417,7 @@ int snake_add_head(Snake *s) {
     if (!check) {
         push_queue(s->q, next_head);
         s->field[y][x] = 3;
+        s->prev_head = create_point(s->head->x, s->head->y);
         s->head = &s->q->last->data;
         s->size += 1;
     }
@@ -376,6 +427,7 @@ int snake_add_head(Snake *s) {
 // Removing tail of snake
 void snake_remove_tail(Snake *s) {
     s->field[s->tail->y][s->tail->x] = 0;
+    s->prev_tail = create_point(s->tail->x, s->tail->y);
     pop_queue(s->q);
     s->tail = &s->q->first->data;
     s->size -= 1;
@@ -385,7 +437,7 @@ void snake_remove_tail(Snake *s) {
 char getch() {
     char buf = 0;
     struct termios old = {0};
-    fflush(stdout);
+    // fflush(stdout);
     if (tcgetattr(0, &old) < 0)
         perror("tcsetattr()");
     old.c_lflag &= ~ICANON;
@@ -397,7 +449,7 @@ char getch() {
     if (read(0, &buf, 1) < 0)
         perror("read()");
     old.c_lflag |= ICANON;
-    old.c_lflag |= ECHO;
+    // old.c_lflag |= ECHO;
     if (tcsetattr(0, TCSADRAIN, &old) < 0)
         perror("tcsetattr ~ICANON");
     return buf;
@@ -431,6 +483,8 @@ void generate_apple(Snake *s) {
             y = (y + 1) % s->y;
     }
     s->field[y][x] = 2;
+    s->apple.y = y;
+    s->apple.x = x;
 }
 
 void print_wall(Snake *s) {
@@ -470,12 +524,13 @@ void print_row(Snake *s) {
 
 // Printing game field on screen
 void print_field(Snake *s) {
-    system("clear");
+    CLEAR;
     DISPLAY_GAME_NAME(GAME_NAME);
-    DISPLAY_STATUS_BAR(s->size, s->eaten_apples);
-    DISPLAY_SEPARATOR;
-    double speed = 1000000 / s->speed;
-    DISPLAY_SPEED(speed);
+    printf("\n");
+    // DISPLAY_STATUS_BAR(s->size, s->eaten_apples);
+    // DISPLAY_SEPARATOR;
+    // double speed = 1000000 / s->speed;
+    // DISPLAY_SPEED(speed);
     print_wall(s);
     print_row(s);
     print_wall(s);
@@ -496,7 +551,7 @@ int is_win(Snake *s) {
 
 // Main game function
 void game() {
-    system("clear");
+    CLEAR;
     Snake *s = create_game();
     if (s) {
         print_field(s);
@@ -514,12 +569,13 @@ void game() {
             }
             else if (check == 1 && !is_win(s))
                 generate_apple(s);
-            print_field(s);
+            // print_field(s);
+            change_field(s);
+            usleep(s->speed);
             if (is_win(s)) {
                 printf("\nCongratulations! You won the game!");
                 break;
             }
-            usleep(s->speed);
         }
         destroy_snake(s);
         usleep(500000);
