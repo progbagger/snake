@@ -443,10 +443,10 @@ char getch() {
         perror("tcsetattr ICANON");
     if (read(0, &buf, 1) < 0)
         perror("read()");
-    old.c_lflag |= ICANON;
-    old.c_lflag |= ECHO;
-    if (tcsetattr(0, TCSADRAIN, &old) < 0)
-        perror("tcsetattr ~ICANON");
+    // old.c_lflag |= ICANON;
+    // old.c_lflag |= ECHO;
+    // if (tcsetattr(0, TCSADRAIN, &old) < 0)
+    //     perror("tcsetattr ~ICANON");
     return buf;
 }
 
