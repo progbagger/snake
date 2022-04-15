@@ -11,8 +11,7 @@
 #define SUCCESS "\033[1;32m[ SUCCESS ]\033[0m - "
 #define STATUS "\033[1;33m[ STATUS ]\033[0m - "
 
-#define GLOBAL_FILE_ERROR_MESSAGE printf("\033[1;31m--------------- %sFile does not read correctly.\
-                                          \033[1;33mExiting...\033[0m\n", ERROR)
+#define GLOBAL_FILE_ERROR_MESSAGE printf("\033[1;31m--------------- %sFile does not read correctly. \033[1;33mExiting...\033[0m\n", ERROR)
 #define GLOBAL_FILE_SUCCESS_MESSAGE printf("\033[1;32m--------------- %sFile read correctly\n", SUCCESS)
 
 #define CLOSING_FILE printf("\033[1;33m---------------\033[0m\t%sClosing file...\n", STATUS)
