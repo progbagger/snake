@@ -373,6 +373,22 @@ void print_apple(Snake *s) {
     printf(APPLE);
 }
 
+void print_status_bar(Snake *s) {
+    DISPLAY_GAME_NAME;
+    DISPLAY_SEPARATOR;
+    DISPLAY_EATEN_APPLES;
+    __APPLES(s->eaten_apples);
+    DISPLAY_SEPARATOR;
+    DISPLAY_SPEED;
+    __SPEED((double) 1000000 / (double) s->speed);
+    printf("\n");
+}
+
+void change_status(Snake *s) {
+    MOVE_CURSOR(0, 17);
+    __APPLES(s->eaten_apples);
+}
+
 void change_field(Snake *s) {
     erase_head(s);
     print_head(s);
@@ -380,6 +396,7 @@ void change_field(Snake *s) {
     print_tail(s);
     erase_apple(s);
     print_apple(s);
+    change_status(s);
     MOVE_CURSOR((int) (s->y + 4), 0);
     /*
         ! To apply changes to game field there are
@@ -525,8 +542,7 @@ void print_row(Snake *s) {
 // Printing game field on screen
 void print_field(Snake *s) {
     CLEAR;
-    DISPLAY_GAME_NAME(GAME_NAME);
-    printf("\n");
+    print_status_bar(s);
     // DISPLAY_STATUS_BAR(s->size, s->eaten_apples);
     // DISPLAY_SEPARATOR;
     // double speed = 1000000 / s->speed;
