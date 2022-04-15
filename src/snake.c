@@ -236,7 +236,9 @@ void menu_level() {
     printf("1 - Classic square level with walls\n");
     printf("2 - Classic square level without walls\n");
     printf("3 - Interesting variant with quadrants\n");
-    printf("4 - Your map\n");
+    printf("4 - Map 3 with holes at edges\n");
+    printf("5 - Map 3 with holes across whole walls\n");
+    printf("6 - Your map\n");
 }
 
 // Input level int
@@ -245,7 +247,7 @@ int input_level() {
     printf("Your choice: ");
     int check = scanf("%d", &result);
     while (getchar() != '\n') {}
-    while (!check || (result < 1 || result > 4)) {
+    while (!check || (result < 1 || result > 6)) {
         printf("%sIncorrect input for %slevel number%s. Please, try again.\n", ERROR, BLUE, RESET);
         menu_level();
         printf("Your choice: ");
@@ -306,9 +308,11 @@ Snake *create_game() {
     const char *files[] = {
         "../datasets/empty_with_walls.txt",
         "../datasets/empty.txt",
-        "../datasets/inner_walls.txt"
+        "../datasets/inner_walls.txt",
+        "../datasets/inner_walls_empty_edges.txt",
+        "../datasets/inner_walls_with_holes.txt"
     };
-    const int files_count = 3;
+    const int files_count = 5;
     menu_level();
     int n = input_level();
     if (n <= files_count) {
