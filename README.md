@@ -14,15 +14,23 @@ Welcome to the game of Snake!
 
 1. First map: 
 
-![First map](assets/empty_with_walls.png)
+![First map](assets/1.png)
 
 2. Second map:
 
-![Second map](assets/empty.png)
+![Second map](assets/2.png)
 
 3. Third map:
 
-![Third map](assets/inner_walls.png)
+![Third map](assets/3.png)
+
+4. Forth map:
+
+![Forth map](assets/4.png)
+
+5. Fifth map:
+
+![Fifth map](assets/5.png)
 
 ## How to create your own map
 
