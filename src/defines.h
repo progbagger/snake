@@ -63,6 +63,8 @@
 #define MOVE_CURSOR(i, j) printf("\033[%d;%dH", i, j)
 #define MEMORISE_CURSOR printf("\033[s")
 #define RETURN_CURSOR printf("\033[u")
+#define HIDE_CURSOR printf("\033[?25l")
+#define SHOW_CURSOR printf("\033[?25h")
 
 /*
     Defines to beautificate and simplify

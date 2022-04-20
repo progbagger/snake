@@ -574,6 +574,7 @@ void game() {
     CLEAR;
     Snake *s = create_game();
     if (s) {
+        HIDE_CURSOR;
         print_field(s);
         usleep(s->speed);
         while (s->size != s->x * s->y) {
@@ -584,7 +585,9 @@ void game() {
             if (check == 0)
                 snake_remove_tail(s);
             else if (check == 2) {
-                printf("\nOops, collision! Game over!");
+                printf("Oops, collision! Game over!\n");
+                usleep(500000);
+                EXIT_GAME;
                 break;
             }
             else if (check == 1 && !is_win(s))
@@ -593,11 +596,13 @@ void game() {
             change_field(s);
             usleep(s->speed);
             if (is_win(s)) {
-                printf("\nCongratulations! You won the game!");
+                printf("\nCongratulations! You won the game!\n");
+                usleep(500000);
+                EXIT_GAME;
                 break;
             }
         }
         destroy_snake(s);
-        usleep(500000);
+        SHOW_CURSOR;
     }
 }
