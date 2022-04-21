@@ -574,8 +574,8 @@ void game() {
     CLEAR;
     Snake *s = create_game();
     if (s) {
-        HIDE_CURSOR;
         print_field(s);
+        HIDE_CURSOR;
         usleep(s->speed);
         while (s->size != s->x * s->y) {
             if (controls(s)) {
@@ -596,7 +596,7 @@ void game() {
             change_field(s);
             usleep(s->speed);
             if (is_win(s)) {
-                printf("\nCongratulations! You won the game!\n");
+                printf("Congratulations! You won the game!\n");
                 usleep(500000);
                 EXIT_GAME;
                 break;
