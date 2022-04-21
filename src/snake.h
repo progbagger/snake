@@ -33,6 +33,4 @@ int is_snake_stopped(Snake *s);
 int is_win(Snake *s);
 void game();
 
-void print_field(Snake *s);
-
 #endif  // SRC_SNAKE_H_
