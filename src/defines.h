@@ -41,6 +41,21 @@
 #define BLUE "\033[1;34m"
 
 /*
+    Files array
+*/
+
+#define FILES_LIST \
+    const char *files[] = {\
+        "../datasets/empty_with_walls.txt",\
+        "../datasets/empty.txt",\
+        "../datasets/inner_walls.txt",\
+        "../datasets/inner_walls_empty_edges.txt",\
+        "../datasets/inner_walls_with_holes.txt"\
+    }\
+
+#define ACCESS_FILE(n) files[n - 1]
+
+/*
     Controls terminal output
 */
 
@@ -87,7 +102,7 @@
 #define DISPLAY_SPEED printf("%s%s%s ", BLUE, "Speed:", RESET)
 
 #define __SPEED(s) printf("%s%-5.2lf%s", YELLOW, s, RESET)
-#define __APPLES(a) printf("%s%-5lu%s", RED, a, RESET)
+#define __APPLES(a) printf("%s%-5zu%s", RED, a, RESET)
 
 #define DISPLAY_GAME_NAME printf("%s%s%s", GREEN, GAME_NAME, RESET)
 #define DISPLAY_SEPARATOR printf(" %s|%s ", BLUE, RESET)

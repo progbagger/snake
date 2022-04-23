@@ -65,18 +65,12 @@ int set_speed(int s) {
 // Choosing level for game
 Snake *create_game() {
     Snake *s = NULL;
-    const char *files[] = {
-        "../datasets/empty_with_walls.txt",
-        "../datasets/empty.txt",
-        "../datasets/inner_walls.txt",
-        "../datasets/inner_walls_empty_edges.txt",
-        "../datasets/inner_walls_with_holes.txt"
-    };
     const int files_count = 5;
     menu_level();
     int n = input_level();
     if (n <= files_count) {
-        s = read_file(files[n - 1]);
+        FILES_LIST;
+        s = read_file(ACCESS_FILE(n));
     } else {
         printf("Path to your map: ");
         char *str = str_input();

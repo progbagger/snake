@@ -61,8 +61,8 @@ char getch() {
 }
 
 int scan_f_size(FILE *f, size_t *x, size_t *y, int *c_input, int *input_count) {
-    int scan_check, check = 1;
-    if ((scan_check = fscanf(f, "%lu %lu", x, y)) != 2) {
+    int check = 1;
+    if (fscanf(f, "%zu %zu", x, y) != 2) {
         check = 0;
         printf("%s", ERROR);
     } else {
@@ -75,8 +75,8 @@ int scan_f_size(FILE *f, size_t *x, size_t *y, int *c_input, int *input_count) {
 }
 
 int scan_w_status(FILE *f, int *w, int *c_input) {
-    int scan_check, check = 1;
-    if (!(scan_check = fscanf(f, "%d", w)) || (*w != 0 && *w != 1)) {
+    int check = 1;
+    if (!fscanf(f, "%d", w) || (*w != 0 && *w != 1)) {
         check = 0;
         printf("%s", ERROR);
     } else {
@@ -88,8 +88,8 @@ int scan_w_status(FILE *f, int *w, int *c_input) {
 }
 
 int scan_i_dir(FILE *f, int *x, int *y, int *c_input) {
-    int scan_check, check = 1;
-    if ((scan_check = fscanf(f, "%d %d", x, y)) != 2 || *x < -1 || *x > 1 || *y < -1 || *y > 1) {
+    int check = 1;
+    if (fscanf(f, "%d %d", x, y) != 2 || *x < -1 || *x > 1 || *y < -1 || *y > 1) {
         check = 0;
         printf("%s", ERROR);
     } else {
@@ -101,8 +101,8 @@ int scan_i_dir(FILE *f, int *x, int *y, int *c_input) {
 }
 
 int scan_s_size(FILE *f, Snake *s, int *snake_size, int *c_input, int *input_count) {
-    int scan_check, check = 1;
-    if (!(scan_check = fscanf(f, "%d", snake_size)) || (size_t) (*snake_size) > s->x * s->y || *snake_size < 0) {
+    int check = 1;
+    if (!fscanf(f, "%d", snake_size) || (size_t) (*snake_size) > s->x * s->y || *snake_size < 0) {
         check = 0;
         printf("%s", ERROR);
     } else {
@@ -116,7 +116,7 @@ int scan_s_size(FILE *f, Snake *s, int *snake_size, int *c_input, int *input_cou
 }
 
 int scan_s_segments(FILE *f, Snake *s, int *c_input) {
-    int scan_check, check = 1;
+    int check = 1;
     printf("%sReading snake segments\n", STATUS);
     int snake_check = 1;
     if (s->size == 0) {
@@ -125,10 +125,10 @@ int scan_s_segments(FILE *f, Snake *s, int *c_input) {
     }
     for (size_t i = 0; i < s->size; i++) {
         int p_x, p_y;
-        if ((scan_check = fscanf(f, "%d %d", &p_x, &p_y)) != 2 || (p_x < 0 || p_x > (int) (s->x - 1)) || (p_y < 0 || p_y > (int) (s->y - 1))) {
+        if (fscanf(f, "%d %d", &p_x, &p_y) != 2 || (p_x < 0 || p_x > (int) (s->x - 1)) || (p_y < 0 || p_y > (int) (s->y - 1))) {
             check = 0;
             snake_check = 0;
-            printf("  %sReading %lu segment\n", ERROR, i);
+            printf("  %sReading %zu segment\n", ERROR, i);
         } else {
             *c_input += 2;
         }
@@ -145,7 +145,7 @@ int scan_s_segments(FILE *f, Snake *s, int *c_input) {
 }
 
 int scan_field(FILE *f, Snake *s, int *c_input) {
-    int scan_check, check = 1;
+    int check = 1;
     s->field = mem_alloc(s->x, s->y);
     int field_check = 1;
     printf("%sReading field\n", STATUS);
@@ -156,10 +156,10 @@ int scan_field(FILE *f, Snake *s, int *c_input) {
     for (size_t i = 0; i < s->y; i++)
         for (size_t j = 0; j < s->x; j++) {
             int cord = -1;
-            if (!(scan_check = fscanf(f, "%d", &cord)) || (cord != 0 && cord != 1)) {
+            if (!fscanf(f, "%d", &cord) || (cord != 0 && cord != 1)) {
                 check = 0;
                 field_check = 0;
-                printf("  %sReading (%lu, %lu) coordinate\n", ERROR, j + 1, i + 1);
+                printf("  %sReading (%zu, %zu) coordinate\n", ERROR, j + 1, i + 1);
             } else {
                 s->field[i][j] = cord;
                 *c_input += 1;
@@ -190,10 +190,13 @@ void valid_check(Snake **s, int check, int c_input, int input_count) {
 // Reading game settings from file
 Snake *read_file(const char *file) {
     printf("\033[1;33m---------------\033[0m\t%sReading file...\n", STATUS);
-    FILE *f = fopen(file, "r");
+    FILE *f = NULL;
+    if (file)
+        f = fopen(file, "r");
     Snake *s = NULL;
-    int check = 1, input_count = 6, c_input = 0;
+    int input_count = 6, c_input = 0;
     if (f) {
+        int check = 1;
         s = init_snake();
         check &= scan_f_size(f, &s->x, &s->y, &c_input, &input_count);
         check &= scan_w_status(f, &s->walls, &c_input);
