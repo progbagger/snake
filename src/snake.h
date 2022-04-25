@@ -12,7 +12,10 @@ typedef struct {
     size_t x, y;
     int walls;
     Point *head, *tail;
+    Point prev_head, prev_tail;
     Point direction;
+    Point apple;
+    Point prev_apple;
     int **field;
     int speed;
 } Snake;
@@ -27,8 +30,7 @@ int snake_add_head(Snake *s);
 void snake_remove_tail(Snake *s);
 void generate_apple(Snake *s);
 int is_snake_stopped(Snake *s);
+int is_win(Snake *s);
 void game();
-
-void print_field(Snake *s);
 
 #endif  // SRC_SNAKE_H_
