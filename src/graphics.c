@@ -120,6 +120,7 @@ void menu_speed() {
     printf("2 - Medium speed\n");
     printf("3 - High speed\n");
     printf("4 - Veterans\n");
+    printf("5 - Insane\n");
 }
 
 // Printing game menu for level
