@@ -58,6 +58,9 @@ int set_speed(int s) {
         case 4:
             result = 62500;
             break;
+        case 5:
+            result = 40000;
+            break;
     }
     return result;
 }
