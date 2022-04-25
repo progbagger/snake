@@ -238,7 +238,7 @@ int input_speed() {
     printf("Your choice: ");
     int check = scanf("%d", &result);
     while (getchar() != '\n') {}
-    while (!check || (result < 1 || result > 4)) {
+    while (!check || (result < 1 || result > 5)) {
         printf("%sIncorrect input for %ssnake speed%s. Please, try again.\n", ERROR, BLUE, RESET);
         menu_speed();
         printf("Your choice: ");
