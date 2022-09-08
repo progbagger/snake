@@ -11,11 +11,18 @@
 #define SUCCESS "\033[1;32m[ SUCCESS ]\033[0m - "
 #define STATUS "\033[1;33m[ STATUS ]\033[0m - "
 
-#define GLOBAL_FILE_ERROR_MESSAGE printf("\033[1;31m--------------- %sFile does not read correctly. \033[1;33mExiting...\033[0m\n", ERROR)
-#define GLOBAL_FILE_SUCCESS_MESSAGE printf("\033[1;32m--------------- %sFile read correctly\n", SUCCESS)
+#define GLOBAL_FILE_ERROR_MESSAGE                                  \
+  printf(                                                          \
+      "\033[1;31m--------------- %sFile does not read correctly. " \
+      "\033[1;33mExiting...\033[0m\n",                             \
+      ERROR)
+#define GLOBAL_FILE_SUCCESS_MESSAGE \
+  printf("\033[1;32m--------------- %sFile read correctly\n", SUCCESS)
 
-#define CLOSING_FILE printf("\033[1;33m---------------\033[0m\t%sClosing file...\n", STATUS)
-#define FILE_DOES_NOT_EXIST printf("\033[1;31m---------------\033[0m\t%sFile does not exist\n", ERROR)
+#define CLOSING_FILE \
+  printf("\033[1;33m---------------\033[0m\t%sClosing file...\n", STATUS)
+#define FILE_DOES_NOT_EXIST \
+  printf("\033[1;31m---------------\033[0m\t%sFile does not exist\n", ERROR)
 
 #define EXIT_GAME printf("%s\033[1;33mExiting...\033[0m\n", STATUS)
 
@@ -44,14 +51,12 @@
     Files array
 */
 
-#define FILES_LIST \
-    const char *files[] = {\
-        "../datasets/empty_with_walls.txt",\
-        "../datasets/empty.txt",\
-        "../datasets/inner_walls.txt",\
-        "../datasets/inner_walls_empty_edges.txt",\
-        "../datasets/inner_walls_with_holes.txt"\
-    }\
+#define FILES_LIST                                                  \
+  const char *files[] = {"../datasets/empty_with_walls.txt",        \
+                         "../datasets/empty.txt",                   \
+                         "../datasets/inner_walls.txt",             \
+                         "../datasets/inner_walls_empty_edges.txt", \
+                         "../datasets/inner_walls_with_holes.txt"}
 
 #define ACCESS_FILE(n) files[n - 1]
 
@@ -60,16 +65,16 @@
 */
 
 //--------------------------------Управление положением курсора--------->
- 
-    //    \033[#A передвинуть курсор вверх на # строк
-    //    \033[#B передвинуть курсор вниз на # строк
-    //    \033[#С передвинуть курсор вправо на # столбцов
-    //    \033[#D передвинуть курсор влево на # столбцов
-    //    \033[#E передвинуть курсор вниз на # строк и поставить в начало строки
-    //    \033[#F передвинуть курсор вверх на # строк и поставить в начало строки
-    //    \033[#G переместить курсор в указанный столбец текущей строки
-    //    \033[#;#H задает абсолютные координаты курсора (строка, столбец)
-    //    \033]2;BLA_BLA\007   Заголовок окна xterm...
+
+//    \033[#A передвинуть курсор вверх на # строк
+//    \033[#B передвинуть курсор вниз на # строк
+//    \033[#С передвинуть курсор вправо на # столбцов
+//    \033[#D передвинуть курсор влево на # столбцов
+//    \033[#E передвинуть курсор вниз на # строк и поставить в начало строки
+//    \033[#F передвинуть курсор вверх на # строк и поставить в начало строки
+//    \033[#G переместить курсор в указанный столбец текущей строки
+//    \033[#;#H задает абсолютные координаты курсора (строка, столбец)
+//    \033]2;BLA_BLA\007   Заголовок окна xterm...
 
 #define CLEAR printf("\033[2J\033[1;1H")
 
