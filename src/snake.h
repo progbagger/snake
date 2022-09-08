@@ -1,3 +1,14 @@
+/**
+ * @file snake.h
+ * @author thrixstudio@yandex.ru
+ * @brief Functions to control game values
+ * @version 0.1
+ * @date 2022-09-09
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #ifndef SRC_SNAKE_H_
 #define SRC_SNAKE_H_
 
