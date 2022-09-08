@@ -1,6 +1,6 @@
 #include "snake.h"
 
 int main() {
-    game();
-    return 0;
+  game();
+  return 0;
 }
