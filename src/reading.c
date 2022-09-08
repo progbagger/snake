@@ -9,14 +9,24 @@
 #include "graphics.h"
 #include "snake.h"
 
-// Allocating field
+/**
+ * @brief Function to allocate memory of readed from level file size
+ *
+ * @param x Field's width
+ * @param y Field's height
+ * @return int** Pointer to allocated field
+ */
 int **mem_alloc(size_t x, size_t y) {
   int **result = calloc(y, sizeof(int *));
   for (size_t i = 0; i < y; i++) result[i] = calloc(x, sizeof(int));
   return result;
 }
 
-// Input an string from stdin
+/**
+ * @brief Function to input string from user
+ *
+ * @return char* Pointer to inputed string
+ */
 char *str_input() {
   char *str = NULL, c = getchar();
   size_t size = 0;
@@ -38,7 +48,11 @@ char *str_input() {
   return str;
 }
 
-// Function to input chars without "Enter"
+/**
+ * @brief Function to enable non-canonical mode of the terminal
+ *
+ * @return char Readed symbol
+ */
 char getch() {
   char buf = 0;
   struct termios old = {0};
@@ -56,6 +70,16 @@ char getch() {
   return buf;
 }
 
+/**
+ * @brief Function to read sizes from file and check readed states
+ *
+ * @param f File where to read
+ * @param x Field's width
+ * @param y Field's height
+ * @param c_input Current input state
+ * @param input_count Count of inputed values at total
+ * @return int 1 if OK; 0 otherwise
+ */
 int scan_f_size(FILE *f, size_t *x, size_t *y, int *c_input, int *input_count) {
   int check = 1;
   if (fscanf(f, "%zu %zu", x, y) != 2) {
@@ -70,6 +94,14 @@ int scan_f_size(FILE *f, size_t *x, size_t *y, int *c_input, int *input_count) {
   return check;
 }
 
+/**
+ * @brief Function to check scanned walls status
+ *
+ * @param f File where to scan
+ * @param w Walls status
+ * @param c_input Current input state
+ * @return int 1 if OK; 0 otherwise
+ */
 int scan_w_status(FILE *f, int *w, int *c_input) {
   int check = 1;
   if (!fscanf(f, "%d", w) || (*w != 0 && *w != 1)) {
@@ -83,6 +115,15 @@ int scan_w_status(FILE *f, int *w, int *c_input) {
   return check;
 }
 
+/**
+ * @brief Function to check if snake's direction is correct
+ *
+ * @param f File where to scan
+ * @param x Head's X position
+ * @param y Head's Y position
+ * @param c_input Current input state
+ * @return int 1 if OK; 0 otherwise
+ */
 int scan_i_dir(FILE *f, int *x, int *y, int *c_input) {
   int check = 1;
   if (fscanf(f, "%d %d", x, y) != 2 || *x < -1 || *x > 1 || *y < -1 || *y > 1) {
@@ -96,6 +137,16 @@ int scan_i_dir(FILE *f, int *x, int *y, int *c_input) {
   return check;
 }
 
+/**
+ * @brief Function to check skane's size
+ *
+ * @param f File where to scan
+ * @param s Snake where to write scanned values
+ * @param snake_size
+ * @param c_input Current input state
+ * @param input_count Total scanned numbers
+ * @return int 1 if OK; 0 otherwise
+ */
 int scan_s_size(FILE *f, Snake *s, int *snake_size, int *c_input,
                 int *input_count) {
   int check = 1;
@@ -113,6 +164,14 @@ int scan_s_size(FILE *f, Snake *s, int *snake_size, int *c_input,
   return check;
 }
 
+/**
+ * @brief Function to check snake's segments
+ *
+ * @param f File where to scan
+ * @param s Snake where to write segments' coordinates
+ * @param c_input Current input state
+ * @return int 1 if OK; 0 otherwise
+ */
 int scan_s_segments(FILE *f, Snake *s, int *c_input) {
   int check = 1;
   printf("%sReading snake segments\n", STATUS);
@@ -144,6 +203,14 @@ int scan_s_segments(FILE *f, Snake *s, int *c_input) {
   return check;
 }
 
+/**
+ * @brief Function to scan and check field
+ *
+ * @param f File where to scan
+ * @param s Snake where to write field's values
+ * @param c_input Current input state
+ * @return int 1 if ok; 0 otherwise
+ */
 int scan_field(FILE *f, Snake *s, int *c_input) {
   int check = 1;
   s->field = mem_alloc(s->x, s->y);
@@ -178,6 +245,14 @@ int scan_field(FILE *f, Snake *s, int *c_input) {
   return check;
 }
 
+/**
+ * @brief Function to check if all values are scanned correctly from the file
+ *
+ * @param s Snake where to check values
+ * @param check Scanned status
+ * @param c_input Current input state
+ * @param input_count Total scanned values
+ */
 void valid_check(Snake **s, int check, int c_input, int input_count) {
   if (check && (c_input == input_count)) {
     generate_apple(*s);
@@ -187,7 +262,12 @@ void valid_check(Snake **s, int check, int c_input, int input_count) {
   }
 }
 
-// Reading game settings from file
+/**
+ * @brief Function to read game field from the file
+ *
+ * @param file File where to read field
+ * @return Snake* Sname where to write field
+ */
 Snake *read_file(const char *file) {
   printf("\033[1;33m---------------\033[0m\t%sReading file...\n", STATUS);
   FILE *f = NULL;
@@ -215,7 +295,11 @@ Snake *read_file(const char *file) {
   return s;
 }
 
-// Input level int
+/**
+ * @brief Function to choose level from database
+ *
+ * @return int Chosen field
+ */
 int input_level() {
   int result = 0;
   printf("Your choice: ");
@@ -234,7 +318,11 @@ int input_level() {
   return result;
 }
 
-// Input speed int while user does not input correct value
+/**
+ * @brief Function to choose speed of the snake
+ *
+ * @return int Chosen speed
+ */
 int input_speed() {
   int result = 0;
   printf("Your choice: ");

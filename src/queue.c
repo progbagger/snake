@@ -3,7 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Creating point in x y coordinates
+/**
+ * @brief Create a point object
+ *
+ * @param x X axis coordinate
+ * @param y Y axis coordinate
+ * @return Point object
+ */
 Point create_point(int x, int y) {
   Point result;
   result.x = x;
@@ -11,7 +17,11 @@ Point create_point(int x, int y) {
   return result;
 }
 
-// Initiating queue to work with it
+/**
+ * @brief Function to initialize queue with empty first and last elements
+ *
+ * @return Queue* pointer to initialized queue
+ */
 Queue *init_queue() {
   Queue *q = (Queue *)malloc(sizeof(Queue));
   q->first = NULL;
@@ -19,7 +29,11 @@ Queue *init_queue() {
   return q;
 }
 
-// Freeing memory of queue
+/**
+ * @brief Function to clean memory allocated for queue
+ *
+ * @param q Queue to clean
+ */
 void destroy_queue(Queue *q) {
   while (q->last) {
     struct node *elem = q->last;
@@ -29,7 +43,12 @@ void destroy_queue(Queue *q) {
   free(q);
 }
 
-// Add element into queue head
+/**
+ * @brief Function to add element to the queue
+ *
+ * @param q Queue where to add element
+ * @param value Value to add
+ */
 void push_queue(Queue *q, Point value) {
   struct node *elem = (struct node *)malloc(sizeof(struct node));
   elem->data = value;
@@ -38,7 +57,12 @@ void push_queue(Queue *q, Point value) {
   if (!q->first) q->first = q->last;
 }
 
-// Delete first element from queue
+/**
+ * @brief Function to delete first element of the queue
+ *
+ * @param q Queue where to delete element
+ * @return Point returned value
+ */
 Point pop_queue(Queue *q) {
   struct node *elem = q->first;
   struct node *temp = q->last;

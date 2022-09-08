@@ -1,6 +1,16 @@
+/**
+ * @file queue.h
+ * @author thrixstudio@yandex.ru
+ * @brief Queue will represent snake istelf
+ * @version 0.1
+ * @date 2022-09-09
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #ifndef SRC_QUEUE_H_
 #define SRC_QUEUE_H_
-
 typedef struct {
   int x, y;
 } Point;

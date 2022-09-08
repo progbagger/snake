@@ -1,3 +1,14 @@
+/**
+ * @file defines.h
+ * @author thrixstudio@yandex.ru
+ * @brief Different values that will be used in common
+ * @version 0.1
+ * @date 2022-09-09
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #ifndef SRC_DEFINES_H_
 #define SRC_DEFINES_H_
 

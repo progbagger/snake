@@ -3,36 +3,71 @@
 #include "defines.h"
 #include "snake.h"
 
+/**
+ * @brief Function to remove snake's head from the field
+ *
+ * @param s Snake
+ */
 void erase_head(Snake *s) {
   MOVE_CURSOR(s->prev_head.y + 2 + 1, s->prev_head.x * 2 + 3);
   printf(SNAKE);
 }
 
+/**
+ * @brief Function to remove snake's tail from the field
+ *
+ * @param s Snake
+ */
 void erase_tail(Snake *s) {
   MOVE_CURSOR(s->prev_tail.y + 2 + 1, s->prev_tail.x * 2 + 3);
   printf(SPACE);
 }
 
+/**
+ * @brief Function to show sneak's tail on the field
+ *
+ * @param s Snake
+ */
 void print_tail(Snake *s) {
   MOVE_CURSOR(s->tail->y + 2 + 1, s->tail->x * 2 + 3);
   printf(SNAKE);
 }
 
+/**
+ * @brief Function to show snake's head on the field
+ *
+ * @param s Snake
+ */
 void print_head(Snake *s) {
   MOVE_CURSOR(s->head->y + 2 + 1, s->head->x * 2 + 3);
   printf(HEAD);
 }
 
+/**
+ * @brief Function to remove apple from the field
+ *
+ * @param s Snake
+ */
 void erase_apple(Snake *s) {
   MOVE_CURSOR(s->apple.y + 2 + 1, s->apple.x * 2 + 3);
   printf(SPACE);
 }
 
+/**
+ * @brief Function to show apple on the field
+ *
+ * @param s Snake
+ */
 void print_apple(Snake *s) {
   MOVE_CURSOR(s->apple.y + 2 + 1, s->apple.x * 2 + 3);
   printf(APPLE);
 }
 
+/**
+ * @brief Function to print status of the game at the top of the field
+ *
+ * @param s Snake
+ */
 void print_status_bar(Snake *s) {
   DISPLAY_GAME_NAME;
   DISPLAY_SEPARATOR;
@@ -44,11 +79,21 @@ void print_status_bar(Snake *s) {
   printf("\n");
 }
 
+/**
+ * @brief Function to print current eaten apples at the status bar
+ *
+ * @param s Snake
+ */
 void change_status(Snake *s) {
   MOVE_CURSOR(0, 17);
   __APPLES(s->eaten_apples);
 }
 
+/**
+ * @brief Function to display walls of the field
+ *
+ * @param s Snake
+ */
 void print_wall(Snake *s) {
   for (size_t i = 0; i < s->x + 2; i++) {
     if (s->walls)
@@ -59,6 +104,11 @@ void print_wall(Snake *s) {
   printf("\n");
 }
 
+/**
+ * @brief Function to print a row of the field
+ *
+ * @param s Snake
+ */
 void print_row(Snake *s) {
   for (size_t i = 0; i < s->y; i++) {
     for (size_t j = 0; j < s->x + 2; j++) {
@@ -84,7 +134,11 @@ void print_row(Snake *s) {
   }
 }
 
-// Printing game field on screen
+/**
+ * @brief Function to print whole field on the screen
+ *
+ * @param s Snake
+ */
 void print_field(Snake *s) {
   CLEAR;
   print_status_bar(s);
@@ -97,6 +151,11 @@ void print_field(Snake *s) {
   print_wall(s);
 }
 
+/**
+ * @brief Function to change displayed field for player
+ *
+ * @param s Snake
+ */
 void change_field(Snake *s) {
   erase_head(s);
   print_head(s);
@@ -114,7 +173,10 @@ void change_field(Snake *s) {
   fflush(stdout);
 }
 
-// Printing game menu for speed
+/**
+ * @brief Function to display starting menu of the game
+ *
+ */
 void menu_speed() {
   printf("Choose speed:\n");
   printf("1 - Very low speed\n");
@@ -124,7 +186,10 @@ void menu_speed() {
   printf("5 - Insane\n");
 }
 
-// Printing game menu for level
+/**
+ * @brief Function to display choosing of the level for the player
+ *
+ */
 void menu_level() {
   printf("Choose level:\n");
   printf("1 - Classic square level with walls\n");

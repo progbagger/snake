@@ -8,13 +8,22 @@
 #include "graphics.h"
 #include "reading.h"
 
-// Freeing field
+/**
+ * @brief Function to clean memory allocated for the game
+ *
+ * @param m Field pointer
+ * @param y Field's height
+ */
 void mem_free(int **m, size_t y) {
   for (size_t i = 0; i < y; i++) free(m[i]);
   free(m);
 }
 
-// Initialization of game
+/**
+ * @brief Function to initialize empty game
+ *
+ * @return Snake* Initialized game
+ */
 Snake *init_snake() {
   Snake *s = (Snake *)malloc(sizeof(Snake));
   s->head = NULL;
@@ -35,14 +44,23 @@ Snake *init_snake() {
   return s;
 }
 
-// Freeing game memory
+/**
+ * @brief Function to clean game's memory
+ *
+ * @param s Game to free
+ */
 void destroy_snake(Snake *s) {
   destroy_queue(s->q);
   mem_free(s->field, s->y);
   free(s);
 }
 
-// Setting speed of snake
+/**
+ * @brief Set the speed objectFunction to set game's speed
+ *
+ * @param s Game pointer
+ * @return int Speed in ms
+ */
 int set_speed(int s) {
   int result = 0;
   switch (s) {
@@ -65,7 +83,11 @@ int set_speed(int s) {
   return result;
 }
 
-// Choosing level for game
+/**
+ * @brief Create a game objectFunction to create game itself
+ *
+ * @return Snake* Created game
+ */
 Snake *create_game() {
   Snake *s = NULL;
   const int files_count = 5;
@@ -92,7 +114,12 @@ Snake *create_game() {
   return s;
 }
 
-// Turning snake
+/**
+ * @brief Function to turn snake in one of four directions
+ *
+ * @param s Snake to turn
+ * @param direction Where to turn snake
+ */
 void snake_turn(Snake *s, Point direction) {
   if (direction.x) {
     if (s->direction.y) s->direction = direction;
@@ -101,7 +128,12 @@ void snake_turn(Snake *s, Point direction) {
   }
 }
 
-// Adding head to snake and checking for walls or apples
+/**
+ * @brief Function to add new head to the snake
+ *
+ * @param s Snake where to add head
+ * @return int Current game status
+ */
 int snake_add_head(Snake *s) {
   int result = 0;
   int x, y;
@@ -136,7 +168,11 @@ int snake_add_head(Snake *s) {
   return result;
 }
 
-// Removing tail of snake
+/**
+ * @brief Function to erase tail of the snake
+ *
+ * @param s Snake where to erase tail
+ */
 void snake_remove_tail(Snake *s) {
   s->field[s->tail->y][s->tail->x] = 0;
   s->prev_tail = create_point(s->tail->x, s->tail->y);
@@ -145,7 +181,12 @@ void snake_remove_tail(Snake *s) {
   s->size -= 1;
 }
 
-// Handling keyboard keys
+/**
+ * @brief Function to handle game controls
+ *
+ * @param s Snake to control
+ * @return int Game status
+ */
 int controls(Snake *s) {
   int result = 0;
   char c = getch();
@@ -157,14 +198,18 @@ int controls(Snake *s) {
     snake_turn(s, RIGHT);
   } else if (c == 's') {
     snake_turn(s, DOWN);
-  } else if (c == 'x') {
+  } else if (c == 'q') {
     result = 1;
     EXIT_GAME;
   }
   return result;
 }
 
-// Generating apple in empty space of field
+/**
+ * @brief Function to generate new apple on the field
+ *
+ * @param s Snake where to generate apple
+ */
 void generate_apple(Snake *s) {
   int x = rand() % s->x, y = rand() % s->y;
   while (s->field[y][x]) {
@@ -176,7 +221,12 @@ void generate_apple(Snake *s) {
   s->apple.x = x;
 }
 
-// Checks if player won the game
+/**
+ * @brief Function to check if game is won
+ *
+ * @param s Game to check
+ * @return int Game status
+ */
 int is_win(Snake *s) {
   /*
       Player can win the game if there are
@@ -188,7 +238,10 @@ int is_win(Snake *s) {
   return result;
 }
 
-// Main game function
+/**
+ * @brief Function to handle whole game
+ *
+ */
 void game() {
   CLEAR;
   Snake *s = create_game();
